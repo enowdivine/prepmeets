@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const user = new mongoose.Schema(
   {
+    role:{
+      type: String,
+      default: "client"
+    },
     avatar: {
       type: Object,
       default: null,
@@ -20,18 +24,14 @@ const user = new mongoose.Schema(
     },
     phone: {
       type: Number,
-      required: [true, "phone number is required"],
+    },
+    whatINeed: {
+      type: String,
+      default: ""
     },
     location: {
       type: String,
-    },
-    focusarea: {
-      type: Boolean,
-      required: [true, "focus area is required"],
-    },
-    havecertifications: {
-      type: Boolean,
-      required: [true, "have certification field is required"],
+      default: ""
     },
     password: {
       type: String,
