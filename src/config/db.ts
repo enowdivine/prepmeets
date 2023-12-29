@@ -5,6 +5,7 @@ require("dotenv").config();
 const dbConnect = () => {
   mongoose
     .connect(process.env.DATABASE_URL as string, {
+      family: 4,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
