@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const user = new mongoose.Schema(
   {
-    role:{
+    role: {
       type: String,
-      default: "client"
+      default: "client",
     },
     avatar: {
       type: Object,
@@ -27,11 +27,11 @@ const user = new mongoose.Schema(
     },
     whatINeed: {
       type: String,
-      default: ""
+      default: "",
     },
     location: {
       type: String,
-      default: ""
+      default: "",
     },
     password: {
       type: String,
