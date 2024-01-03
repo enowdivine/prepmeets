@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const expert = new mongoose.Schema(
   {
-    role:{
+    role: {
       type: String,
-      default: "expert"
+      default: "expert",
     },
     avatar: {
       type: Object,
@@ -107,15 +107,18 @@ const expert = new mongoose.Schema(
         type: String,
       },
       paymentStream: {
-        type: String
+        type: String,
       },
       IBAN: {
-        type: String
+        type: String,
       },
       SWIFTBIC: {
-        type: String
-      }
-    }
+        type: String,
+      },
+    },
+    rating: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

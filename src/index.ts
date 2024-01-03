@@ -6,12 +6,20 @@ import cors from "cors";
 // api imports
 import userRoutes from "./routes/users/user.routes";
 import experRoutes from "./routes/experts/expert.routes";
+import sessionRoutes from "./routes/sessions/session.routes";
+
 // swagger imports
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
 
+// socket io import
+const http = require("http");
+const socketIo = require("socket.io");
+import socketLogic from "./socketLogic";
+
 dotenv.config();
 dbConnect(); // database connection
+
 // swagger options
 const options = {
   definition: {
@@ -29,8 +37,18 @@ const options = {
   },
   apis: ["./src/routes/**/*.ts"],
 };
+
 const specs = swaggerJsDoc(options);
 const app: Application = express();
+const server = http.createServer(app);
+export const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    credentials: true,
+  },
+});
+socketLogic(io);
 
 const corsOptions = {
   origin: "*",
@@ -44,12 +62,13 @@ app.use(bodyParser.json());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(`/api/${process.env.API_VERSION}/client`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/expert`, experRoutes);
+app.use(`/api/${process.env.API_VERSION}/session`, sessionRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Prepmeets Server");
 });
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
