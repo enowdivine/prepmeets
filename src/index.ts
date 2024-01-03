@@ -7,6 +7,7 @@ import cors from "cors";
 import userRoutes from "./routes/users/user.routes";
 import experRoutes from "./routes/experts/expert.routes";
 import sessionRoutes from "./routes/sessions/session.routes";
+import ratingRoutes from "./routes/ratings/rating.routes";
 
 // swagger imports
 const swaggerUI = require("swagger-ui-express");
@@ -63,6 +64,7 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(`/api/${process.env.API_VERSION}/client`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/expert`, experRoutes);
 app.use(`/api/${process.env.API_VERSION}/session`, sessionRoutes);
+app.use(`/api/${process.env.API_VERSION}/ratings`, ratingRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Prepmeets Server");
