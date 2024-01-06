@@ -15,7 +15,8 @@ const swaggerJsDoc = require("swagger-jsdoc");
 
 // socket io import
 const http = require("http");
-const socketIo = require("socket.io");
+const path = require("path");
+export const appRoot = path.resolve(__dirname);
 import socketLogic from "./socketLogic";
 
 dotenv.config();
@@ -60,6 +61,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "uploads/client/profileImages"))); // Serve static files (images)
+app.use(express.static(path.join(__dirname, "uploads/expert/profileImages"))); // Serve static files (images)
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(`/api/${process.env.API_VERSION}/client`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/expert`, experRoutes);

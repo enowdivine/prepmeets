@@ -1,6 +1,9 @@
 import express, { Router } from "express";
 import UserCtl from "./user.controller";
-// import { upload } from "../../middleware/s3/s3";
+import fileUpload from "express-fileupload";
+import fileExtLimiter from "../../middleware/fileUpload/fileExtLimiter";
+import fileSizeLimiter from "../../middleware/fileUpload/fileSizeLimiter";
+import filesPayloadExists from "../../middleware/fileUpload/filePayloadExists";
 
 const router: Router = express.Router();
 const user = new UserCtl();
@@ -215,11 +218,47 @@ router.get("/user/:id", user.user);
  */
 router.get("/users", user.users);
 
-// router.put(
-//   "/upload-profile-image/:id",
-//   upload.single("profileImage"),
-//   user.uploadProfileImage
-// );
+/**
+ * @swagger
+ * /api/v1/client/update-profile-image/{id}:
+ *   put:
+ *      summary: update profile image
+ *      tags: [User]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: user id
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: array
+ *                      required:
+ *                          - files
+ *                      items:
+ *                          files:
+ *                              type: array
+ *                              description: images files
+ *      responses:
+ *          200:
+ *              description: success
+ *          404:
+ *              description: user not found
+ *          500:
+ *              description: an error occured
+ */
+router.put(
+  "/upload-profile-image/:id",
+  fileUpload({ createParentPath: true }),
+  filesPayloadExists,
+  fileExtLimiter([".png", ".jpg", ".jpeg"]),
+  fileSizeLimiter,
+  user.uploadProfileImage
+);
 
 /**
  * @swagger

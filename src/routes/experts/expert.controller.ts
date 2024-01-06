@@ -3,7 +3,9 @@ import Expert from "./expert.model";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
-import { deleteObject } from "../../middleware/s3/s3";
+const fs = require("fs");
+const path = require("path");
+import { appRoot } from "../..";
 
 class ExpertController {
   async register(req: Request, res: Response) {
@@ -162,7 +164,7 @@ class ExpertController {
             fullname: req.body.fullname,
             paymentStream: req.body.paymentStream,
             IBAN: req.body.IBAN,
-            SWIFTBIC: req.body.SWIFTBIC
+            SWIFTBIC: req.body.SWIFTBIC,
           },
         },
       }
@@ -188,59 +190,83 @@ class ExpertController {
     }
   }
 
-  //   async uploadProfileImage(req: Request, res: Response) {
-  //     try {
-  //       const user = await Expert.findOne({ _id: req.params.id });
-  //       if (user) {
-  //         if (user.avatar !== null) {
-  //           const imageKey = user.avatar.key;
-  //           await deleteObject(imageKey);
-  //         }
-  //       }
-  //       const multerFiles = JSON.parse(JSON.stringify(req.file));
-  //       if (multerFiles) {
-  //         const image = {
-  //           doc: multerFiles?.location,
-  //           key: multerFiles?.key,
-  //         };
-  //         const user = await User.updateOne(
-  //           {
-  //             _id: req.params.id,
-  //           },
-  //           {
-  //             $set: {
-  //               avatar: image,
-  //             },
-  //           }
-  //         );
-  //         if (user.acknowledged) {
-  //           const newuser = await Expert.findOne({ _id: req.params.id });
-  //           const token: string = jwt.sign(
-  //             {
-  //               id: newuser?._id,
-  //               phone: newuser?.phone,
-  //               email: newuser?.email,
-  //             },
-  //             process.env.JWT_SECRET as string
-  //           );
-  //           res.status(200).json({
-  //             message: "success",
-  //             token: token,
-  //           });
-  //         } else {
-  //           res.status(404).json({
-  //             message: "user not found",
-  //           });
-  //         }
-  //       } else {
-  //         return res.status(500).json({
-  //           message: "image upload failed",
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error("error uploading profile image", error);
-  //     }
-  //   }
+  async uploadProfileImage(req: Request, res: Response) {
+    try {
+      const files: any = req.files;
+
+      Object.keys(files).forEach((key) => {
+        const filepath = path.join(
+          appRoot,
+          "uploads/expert/profileImages",
+          files[key].name
+        );
+        files[key].mv(filepath, (err: any) => {
+          if (err)
+            return res
+              .status(500)
+              .json({ message: "error uploading profile imag", error: err });
+        });
+      });
+
+      // Find and delete current image if it exist
+      const user = await Expert.findOne({ _id: req.params.id });
+      if (user?.avatar !== null) {
+        const filePathToDelete = path.join(
+          __dirname,
+          "uploads/expert/profileImages",
+          user?.avatar.doc
+        );
+        // Use fs.unlink to delete the file
+        fs.unlink(appRoot, (err: any) => {
+          if (err) {
+            console.error(`Error deleting file: ${err.message}`);
+          } else {
+            console.log(`File ${filePathToDelete} deleted successfully.`);
+          }
+        });
+      }
+
+      // upload new image to database
+      const profileImage: any[] = Object.entries(files)[0];
+      const image = {
+        doc: profileImage[1].name,
+        key: profileImage[0],
+      };
+
+      const updatedUser = await Expert.updateOne(
+        {
+          _id: req.params.id,
+        },
+        {
+          $set: {
+            avatar: image,
+          },
+        }
+      );
+
+      if (updatedUser.acknowledged) {
+        const newuser = await Expert.findOne({ _id: req.params.id });
+        const token: string = jwt.sign(
+          {
+            id: newuser?._id,
+            phone: newuser?.phone,
+            email: newuser?.email,
+          },
+          process.env.JWT_SECRET as string
+        );
+        res.status(200).json({
+          message: "success",
+          token: token,
+        });
+      } else {
+        res.status(404).json({
+          message: "user not found",
+        });
+      }
+    } catch (error) {
+      console.error("error uploading profile image", error);
+    }
+  }
 
   async updatePassword(req: Request, res: Response) {
     let user = await Expert.findOne({ _id: req.params.id });
