@@ -32,11 +32,11 @@ const session = new mongoose.Schema(
     },
     sessionStatus: {
       type: String,
-      default: "pending",
+      default: "scheduled",
     },
     paymentStatus: {
       type: String,
-      default: "scheduled",
+      default: "pending",
     },
     prepmeetCommission: {
       type: Number,
