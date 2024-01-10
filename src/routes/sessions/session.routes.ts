@@ -59,7 +59,7 @@ const session = new SessionCtl();
 
 /**
  * @swagger
- * /api/v1/session/create:
+ * /api/v1/sessions/create:
  *   post:
  *      summary: create a new session
  *      tags: [Session]
@@ -83,7 +83,7 @@ router.post("/create", session.create);
 
 /**
  * @swagger
- * /api/v1/session/session/{id}:
+ * /api/v1/sessions/{id}:
  *   get:
  *      summary: get session by id
  *      tags: [Session]
@@ -104,11 +104,11 @@ router.post("/create", session.create);
  *          404:
  *              description: session was not found
  */
-router.get("/session/:id", session.session);
+router.get("/:id", session.session);
 
 /**
  * @swagger
- * /api/v1/session/sessions:
+ * /api/v1/sessions/:
  *   get:
  *      summary: get all sessions
  *      tags: [Session]
@@ -122,11 +122,11 @@ router.get("/session/:id", session.session);
  *                          items:
  *                              $ref: '#/components/schemas/Session'
  */
-router.get("/sessions", session.sessions);
+router.get("/", session.sessions);
 
 /**
  * @swagger
- * /api/v1/session/update-status/{id}:
+ * /api/v1/sessions/update-status/{id}:
  *   put:
  *      summary: update session details
  *      tags: [Session]

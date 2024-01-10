@@ -71,7 +71,7 @@ const user = new UserCtl();
 
 /**
  * @swagger
- * /api/v1/client/register:
+ * /api/v1/clients/register:
  *   post:
  *      summary: create a new user
  *      tags: [User]
@@ -95,7 +95,7 @@ router.post("/register", user.register);
 
 /**
  * @swagger
- * /api/v1/client/login:
+ * /api/v1/clients/login:
  *   post:
  *      summary: user login
  *      tags: [User]
@@ -128,7 +128,7 @@ router.post("/login", user.login);
 
 /**
  * @swagger
- * /api/v1/client/forgot-password:
+ * /api/v1/clients/forgot-password:
  *   post:
  *      summary: forgot password
  *      tags: [User]
@@ -156,7 +156,7 @@ router.post("/forgot-password", user.forgotPassword);
 
 /**
  * @swagger
- * /api/v1/client/verification/{token}:
+ * /api/v1/clients/verification/{token}:
  *   get:
  *      summary: email verification
  *      tags: [User]
@@ -177,7 +177,7 @@ router.get("/verification/:token", user.verifyEmail);
 
 /**
  * @swagger
- * /api/v1/client/user/{id}:
+ * /api/v1/clients/{id}:
  *   get:
  *      summary: get user by id
  *      tags: [User]
@@ -198,11 +198,11 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: user was not found
  */
-router.get("/user/:id", user.user);
+router.get("/:id", user.user);
 
 /**
  * @swagger
- * /api/v1/client/users:
+ * /api/v1/clients/:
  *   get:
  *      summary: get all users
  *      tags: [User]
@@ -216,11 +216,11 @@ router.get("/user/:id", user.user);
  *                          items:
  *                              $ref: '#/components/schemas/User'
  */
-router.get("/users", user.users);
+router.get("/", user.users);
 
 /**
  * @swagger
- * /api/v1/client/update-profile-image/{id}:
+ * /api/v1/clients/update-profile-image/{id}:
  *   put:
  *      summary: update profile image
  *      tags: [User]
@@ -262,7 +262,7 @@ router.put(
 
 /**
  * @swagger
- * /api/v1/client/update-user/{id}:
+ * /api/v1/clients/update-user/{id}:
  *   put:
  *      summary: update user details
  *      tags: [User]
@@ -295,7 +295,7 @@ router.put("/update-user/:id", user.update);
 
 /**
  * @swagger
- * /api/v1/client/update-password/{id}:
+ * /api/v1/clients/update-password/{id}:
  *   put:
  *      summary: update user password
  *      tags: [User]
@@ -337,7 +337,7 @@ router.put("/update-password/:id", user.updatePassword);
 
 /**
  * @swagger
- * /api/v1/client/new-password/{id}:
+ * /api/v1/clients/new-password/{id}:
  *   put:
  *      summary: create new user password
  *      tags: [User]

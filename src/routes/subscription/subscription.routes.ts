@@ -27,7 +27,7 @@ const mail = new SubscriptionController();
 
 /**
  * @swagger
- * /api/v1/subscription/subscribe:
+ * /api/v1/subscriptions/subscribe:
  *   post:
  *      summary: new subscription
  *      tags: [Subscription]
@@ -51,7 +51,7 @@ router.post("/subscribe", mail.subscribe);
 
 /**
  * @swagger
- * /api/v1/subscription/Subscription:
+ * /api/v1/subscriptions/:
  *   get:
  *      summary: get all emails
  *      tags: [Subscription]
@@ -65,11 +65,11 @@ router.post("/subscribe", mail.subscribe);
  *                          items:
  *                              $ref: '#/components/schemas/Subscription'
  */
-router.get("/subscribers", mail.subsribers);
+router.get("/", mail.subsribers);
 
 /**
  * @swagger
- * /api/v1/subscription/unsubscribe:
+ * /api/v1/subscriptions/unsubscribe:
  *   delete:
  *      summary: unsubscribe
  *      tags: [Subscription]

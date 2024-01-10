@@ -1,4 +1,4 @@
-const socketLogic = (io: any) => {
+const onlineSessionLogic = (io: any) => {
   // online session logic
   io.on("connection", (socket: any) => {
     socket.emit("me", socket.id);
@@ -21,4 +21,4 @@ const socketLogic = (io: any) => {
   });
 };
 
-export default socketLogic;
+export default onlineSessionLogic;

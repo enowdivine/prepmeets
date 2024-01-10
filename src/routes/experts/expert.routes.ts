@@ -123,7 +123,7 @@ const user = new ExpertCtl();
 
 /**
  * @swagger
- * /api/v1/expert/register:
+ * /api/v1/experts/register:
  *   post:
  *      summary: create a new expert
  *      tags: [Expert]
@@ -147,7 +147,7 @@ router.post("/register", user.register);
 
 /**
  * @swagger
- * /api/v1/expert/login:
+ * /api/v1/experts/login:
  *   post:
  *      summary: expert login
  *      tags: [Expert]
@@ -180,7 +180,7 @@ router.post("/login", user.login);
 
 /**
  * @swagger
- * /api/v1/expert/forgot-password:
+ * /api/v1/experts/forgot-password:
  *   post:
  *      summary: forgot password
  *      tags: [Expert]
@@ -208,7 +208,7 @@ router.post("/forgot-password", user.forgotPassword);
 
 /**
  * @swagger
- * /api/v1/expert/verification/{token}:
+ * /api/v1/experts/verification/{token}:
  *   get:
  *      summary: email verification
  *      tags: [Expert]
@@ -229,7 +229,7 @@ router.get("/verification/:token", user.verifyEmail);
 
 /**
  * @swagger
- * /api/v1/expert/expert/{id}:
+ * /api/v1/experts/{id}:
  *   get:
  *      summary: get expert by id
  *      tags: [Expert]
@@ -250,11 +250,11 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: expert was not found
  */
-router.get("/expert/:id", user.user);
+router.get("/:id", user.user);
 
 /**
  * @swagger
- * /api/v1/expert/experts:
+ * /api/v1/experts/:
  *   get:
  *      summary: get all experts
  *      tags: [Expert]
@@ -268,11 +268,11 @@ router.get("/expert/:id", user.user);
  *                          items:
  *                              $ref: '#/components/schemas/Experts'
  */
-router.get("/experts", user.users);
+router.get("/", user.users);
 
 /**
  * @swagger
- * /api/v1/expert/update-profile-image/{id}:
+ * /api/v1/experts/update-profile-image/{id}:
  *   put:
  *      summary: update profile image
  *      tags: [Expert]
@@ -314,7 +314,7 @@ router.put(
 
 /**
  * @swagger
- * /api/v1/expert/update-expert/{id}:
+ * /api/v1/experts/update-expert/{id}:
  *   put:
  *      summary: update expert details
  *      tags: [Expert]
@@ -347,7 +347,7 @@ router.put("/update-expert/:id", user.update);
 
 /**
  * @swagger
- * /api/v1/expert/update-password/{id}:
+ * /api/v1/experts/update-password/{id}:
  *   put:
  *      summary: update expert password
  *      tags: [Expert]
@@ -389,7 +389,7 @@ router.put("/update-password/:id", user.updatePassword);
 
 /**
  * @swagger
- * /api/v1/expert/new-password/{id}:
+ * /api/v1/experts/new-password/{id}:
  *   put:
  *      summary: create new expert password
  *      tags: [Expert]

@@ -1,14 +1,17 @@
-import express, { Express, Request, Response, Application } from "express";
+import express, { Request, Response, Application } from "express";
 import bodyParser = require("body-parser");
 import dbConnect from "./config/db";
 import dotenv from "dotenv";
 import cors from "cors";
 // api imports
+import onlineSessionLogic from "./onlineSessionLogic";
 import userRoutes from "./routes/users/user.routes";
 import experRoutes from "./routes/experts/expert.routes";
 import sessionRoutes from "./routes/sessions/session.routes";
 import ratingRoutes from "./routes/ratings/rating.routes";
-import paymentRoutes from "./routes/payments/stripe.routes";
+import messageRoutes from "./routes/messages/messages.routes";
+import conversationRoutes from "./routes/conversations/conversation.routes";
+import subscriptionRoutes from "./routes/subscription/subscription.routes";
 
 // swagger imports
 const swaggerUI = require("swagger-ui-express");
@@ -18,7 +21,6 @@ const swaggerJsDoc = require("swagger-jsdoc");
 const http = require("http");
 const path = require("path");
 export const appRoot = path.resolve(__dirname);
-import socketLogic from "./socketLogic";
 
 dotenv.config();
 dbConnect(); // database connection
@@ -51,7 +53,7 @@ export const io = require("socket.io")(server, {
     credentials: true,
   },
 });
-socketLogic(io);
+onlineSessionLogic(io);
 
 const corsOptions = {
   origin: "*",
@@ -65,11 +67,13 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "uploads/client/profileImages"))); // Serve static files (images)
 app.use(express.static(path.join(__dirname, "uploads/expert/profileImages"))); // Serve static files (images)
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-app.use(`/api/${process.env.API_VERSION}/client`, userRoutes);
-app.use(`/api/${process.env.API_VERSION}/expert`, experRoutes);
-app.use(`/api/${process.env.API_VERSION}/session`, sessionRoutes);
+app.use(`/api/${process.env.API_VERSION}/clients`, userRoutes);
+app.use(`/api/${process.env.API_VERSION}/experts`, experRoutes);
+app.use(`/api/${process.env.API_VERSION}/sessions`, sessionRoutes);
 app.use(`/api/${process.env.API_VERSION}/ratings`, ratingRoutes);
-app.use(`/api/${process.env.API_VERSION}/payments`, paymentRoutes);
+app.use(`/api/${process.env.API_VERSION}/messages`, messageRoutes);
+app.use(`/api/${process.env.API_VERSION}/conversations`, conversationRoutes);
+app.use(`/api/${process.env.API_VERSION}/subscriptions`, subscriptionRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Prepmeets Server");
