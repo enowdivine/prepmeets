@@ -3,41 +3,41 @@ import { Sequelize, DataTypes, Model } from "sequelize";
 export default class Expert extends Model {
   public id?: number;
   public role?: string;
-  public avatar?: Record<string, any>;
+  public avatar?: string;
   public introvideo?: string;
 
   public firstname?: string;
   public lastname?: string;
   public email?: string;
-  public phone?: number;
+  public phone?: number | null;
   public password?: string;
   public emailConfirmed?: boolean;
   public bio?: string;
-  public education?: Array<JSON>;
-  public experience?: Array<JSON>;
-  public certificates?: Array<JSON>;
+  public education?: Array<JSON> | [];
+  public experience?: Array<JSON> | [];
+  public certificates?: Array<JSON> | [];
 
   public gender?: string;
-  public dateOfBirth?: Date;
+  public dateOfBirth?: Date | null;
   public location?: string;
-  public focusarea?: Array<JSON>;
+  public focusarea?: Array<JSON> | [];
 
   public havecertifications?: boolean;
   public timeNotice?: string;
-  public timezone?: Date;
-  public calenderSlots?: Array<JSON>;
-  public pricing?: Record<string, any>;
+  public timezone?: string | null; // Adjusted data type
+  public calenderSlots?: Array<JSON> | [];
+  public pricing?: Record<string, any> | null; // Adjusted data type
 
   public trialSessions?: boolean;
   public visibilityLevel?: string;
-  public payments?: Record<string, any>;
-  public rating?: number;
+  public payments?: Record<string, any> | null; // Adjusted data type
+  public rating?: number | null; // Adjusted data type
 
   public accountId?: string;
   public provider?: string;
 }
 
-export const ExpertMap = (sequelize: Sequelize) => {
+export const ExpertMap = async (sequelize: Sequelize) => {
   Expert.init(
     {
       id: {
@@ -50,8 +50,8 @@ export const ExpertMap = (sequelize: Sequelize) => {
         defaultValue: "client",
       },
       avatar: {
-        type: DataTypes.JSON,
-        defaultValue: null,
+        type: DataTypes.STRING,
+        defaultValue: "",
       },
       introvideo: {
         type: DataTypes.STRING,
@@ -71,6 +71,7 @@ export const ExpertMap = (sequelize: Sequelize) => {
       },
       phone: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         defaultValue: null,
       },
       password: {
@@ -107,6 +108,7 @@ export const ExpertMap = (sequelize: Sequelize) => {
       },
       dateOfBirth: {
         type: DataTypes.DATE,
+        allowNull: true,
         defaultValue: null,
       },
       location: {
@@ -128,8 +130,9 @@ export const ExpertMap = (sequelize: Sequelize) => {
         defaultValue: "",
       },
       timezone: {
-        type: DataTypes.DATE,
-        defaultValue: null,
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "",
       },
       calenderSlots: {
         type: DataTypes.ARRAY(DataTypes.JSON),
@@ -138,6 +141,7 @@ export const ExpertMap = (sequelize: Sequelize) => {
       },
       pricing: {
         type: DataTypes.JSON,
+        allowNull: true,
         defaultValue: null,
       },
 
@@ -151,11 +155,12 @@ export const ExpertMap = (sequelize: Sequelize) => {
       },
       payments: {
         type: DataTypes.JSON,
+        allowNull: true,
         defaultValue: null,
       },
       rating: {
-        type: DataTypes.STRING,
-        defaultValue: "",
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
       },
 
       accountId: {
@@ -173,7 +178,7 @@ export const ExpertMap = (sequelize: Sequelize) => {
       modelName: "Expert", // explicitly set modelName
     }
   );
-  Expert.sync();
+  await Expert.sync();
 };
 
 // pricing: {

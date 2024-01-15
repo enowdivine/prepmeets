@@ -19,7 +19,7 @@ interface UserAttributes {
 export default class User extends Model {
   public id?: number;
   public role?: string;
-  public avatar?: Record<string, any>;
+  public avatar?: string;
   public firstname?: string;
   public lastname?: string;
   public email?: string;
@@ -45,8 +45,9 @@ export const UserMap = (sequelize: Sequelize) => {
         defaultValue: "client",
       },
       avatar: {
-        type: DataTypes.JSON,
-        defaultValue: null,
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "",
       },
       firstname: {
         type: DataTypes.STRING,
@@ -62,6 +63,7 @@ export const UserMap = (sequelize: Sequelize) => {
       },
       phone: {
         type: DataTypes.INTEGER,
+        allowNull: true,
         defaultValue: null,
       },
       whatINeed: {

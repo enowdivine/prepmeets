@@ -23,15 +23,20 @@ class UserController {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         email: req.body.email,
+        phone: req.body.phone,
+        whatINeed: req.body.whatINeed,
+        location: req.body.location,
         password: hash,
       };
-
       const newuser = await User.create(userData);
-      const token = {
-        id: newuser.id,
-        email: newuser.email,
-        phone: newuser.phone,
-      };
+      const token: string = jwt.sign(
+        {
+          id: newuser.id,
+          email: newuser.email,
+          phone: newuser.phone,
+        },
+        process.env.JWT_SECRET as string
+      );
       res.status(201).json({
         message: "success",
         token,
@@ -213,7 +218,7 @@ class UserController {
           const filePathToDelete = path.join(
             __dirname,
             "uploads/client/profileImages",
-            user.avatar!.doc
+            user.avatar
           );
           // Use fs.unlink to delete the file
           fs.unlink(appRoot, (err: any) => {
@@ -227,13 +232,13 @@ class UserController {
 
         // upload new image to database
         const profileImage: any[] = Object.entries(files)[0];
-        const image = {
-          doc: profileImage[1].name,
-          key: profileImage[0],
-        };
+        // const image = {
+        //   doc: profileImage[1].name,
+        //   key: profileImage[0],
+        // };
 
         user.set({
-          avatar: image,
+          avatar: profileImage[1].name,
         });
         await user.save().then(() => {
           return res.status(200).json({
