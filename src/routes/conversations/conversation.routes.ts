@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import Conversations from "./conversation.controller";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const conversations = new Conversations();
@@ -51,7 +52,7 @@ const conversations = new Conversations();
  *          500:
  *              description: an error occured
  */
-router.post("/create", conversations.createConversation);
+router.post("/create", verifyToken, conversations.createConversation);
 
 /**
  * @swagger
@@ -77,6 +78,6 @@ router.post("/create", conversations.createConversation);
  *          404:
  *              description: conversations not found
  */
-router.get("/:id", conversations.getUserConversations);
+router.get("/:id", verifyToken, conversations.getUserConversations);
 
 export default router;

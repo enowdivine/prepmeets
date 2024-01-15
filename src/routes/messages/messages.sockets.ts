@@ -34,17 +34,13 @@ io.on("connection", (socket: any) => {
       const { senderId, receiverId, message } = data;
 
       // Save message to database
-      const newMessage = new Messages(data);
-      await newMessage.save();
+      await Messages.create(data);
 
       // Get socket user from array
       const user = getUser(receiverId);
 
       // Send message to socket user
-      io.to(user.socketId).emit("getMessage", {
-        senderId,
-        message,
-      });
+      io.to(user.socketId).emit("getMessage", data);
     }
   );
 

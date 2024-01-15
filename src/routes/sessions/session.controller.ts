@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import Session from "./session.model";
+import Session, { SessionMap } from "./session.model";
+import sequelizeDB from "../../config/db";
 import _ from "lodash";
 
 class SessionController {
   async create(req: Request, res: Response) {
     try {
-      const booking = new Session({
+      const booking = {
         expertId: req.body.expertId,
         clientId: req.body.clientId,
         sessionType: req.body.sessionType,
@@ -15,12 +16,13 @@ class SessionController {
         sessionDate: req.body.sessionDate,
         sessionStatus: req.body.sessionStatus,
         paymentStatus: req.body.paymentStatus,
-      });
-      booking
-        .save()
+      };
+      SessionMap(sequelizeDB);
+      Session.create(booking)
         .then((response) => {
           res.status(201).json({
             message: "success",
+            booking: response,
           });
         })
         .catch((err) => {
@@ -31,12 +33,17 @@ class SessionController {
         });
     } catch (error) {
       console.error("booking failed", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async session(req: Request, res: Response) {
     try {
-      const session = await Session.findOne({ _id: req.params.id });
+      SessionMap(sequelizeDB);
+      const session = await Session.findOne({ where: { id: req.params.id } });
       if (session) {
         return res.status(200).json(session);
       } else {
@@ -46,12 +53,61 @@ class SessionController {
       }
     } catch (error) {
       console.error("error fetching session", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
+
+  async clientSessions(req: Request, res: Response) {
+    try {
+      SessionMap(sequelizeDB);
+      const session = await Session.findAll({
+        where: { clientId: req.params.id },
+      });
+      if (session) {
+        return res.status(200).json(session);
+      } else {
+        return res.status(404).json({
+          message: "session not found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching session", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
+
+  async expertSessions(req: Request, res: Response) {
+    try {
+      SessionMap(sequelizeDB);
+      const session = await Session.findAll({
+        where: { expertId: req.params.id },
+      });
+      if (session) {
+        return res.status(200).json(session);
+      } else {
+        return res.status(404).json({
+          message: "session not found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching session", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async sessions(req: Request, res: Response) {
     try {
-      const sessions = await Session.find().sort({ createdAt: -1 });
+      SessionMap(sequelizeDB);
+      const sessions = await Session.findAll();
       if (sessions) {
         return res.status(200).json(sessions);
       } else {
@@ -61,12 +117,17 @@ class SessionController {
       }
     } catch (error) {
       console.error("error fetching sessions", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async updateStatus(req: Request, res: Response) {
     try {
-      const session = await Session.findOne({ _id: req.params.id });
+      SessionMap(sequelizeDB);
+      const session = await Session.findOne({ where: { id: req.params.id } });
       if (session) {
         session.sessionStatus = req.body.status;
         await session.save().then(async () => {
@@ -81,6 +142,10 @@ class SessionController {
       }
     } catch (error) {
       console.error(error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 }

@@ -1,23 +1,43 @@
-import mongoose from "mongoose";
+import { Sequelize, DataTypes, Model } from "sequelize";
 
-const MessageSchema = new mongoose.Schema(
-  {
-    conversationId: {
-      type: String,
-    },
-    senderId: {
-      type: String,
-    },
-    receiverId: {
-      type: String,
-    },
-    message: {
-      type: String,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+export default class Message extends Model {
+  public id?: number;
+  public conversationId?: string;
+  public senderId?: string;
+  public receiverId?: string;
+  public message?: string;
+}
 
-export default mongoose.model("Message", MessageSchema);
+export const MessageMap = (sequelize: Sequelize) => {
+  Message.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      conversationId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      senderId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      receiverId: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      message: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+    },
+    {
+      sequelize,
+      tableName: "messages", // explicitly set the table name
+      modelName: "Message", // explicitly set modelName
+    }
+  );
+  Message.sync();
+};

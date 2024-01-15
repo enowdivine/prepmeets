@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import Expert from "./expert.model";
+import Expert, { ExpertMap } from "./expert.model";
+import sequelizeDB from "../../config/db";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
@@ -10,14 +11,15 @@ import { appRoot } from "../..";
 class ExpertController {
   async register(req: Request, res: Response) {
     try {
-      const user = await Expert.findOne({ email: req.body.email });
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { email: req.body.email } });
       if (user) {
         return res.status(409).json({
           message: "email already exist",
         });
       }
       const hash = await bcrypt.hash(req.body.password, 10);
-      const newuser = new Expert({
+      const userData = {
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         phone: req.body.phone,
@@ -25,28 +27,24 @@ class ExpertController {
         focusarea: req.body.focusarea,
         havecertifications: req.body.havecertifications,
         password: hash,
+      };
+
+      const newuser = await Expert.create(userData);
+      const token = {
+        id: newuser.id,
+        email: newuser.email,
+        phone: newuser.phone,
+      };
+      res.status(201).json({
+        message: "success",
+        token,
       });
-      newuser
-        .save()
-        .then((response) => {
-          const token = {
-            id: response._id,
-            email: response.email,
-            phone: response.phone,
-          };
-          res.status(201).json({
-            message: "success",
-            token,
-          });
-        })
-        .catch((err) => {
-          res.status(500).json({
-            message: "an error occured",
-            error: err,
-          });
-        });
     } catch (error) {
       console.error("user registration error", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
@@ -56,35 +54,46 @@ class ExpertController {
         req.params.token,
         process.env.JWT_SECRET as string
       );
-      const response = await Expert.updateOne(
-        { _id: decodedToken.id },
-        {
-          $set: {
-            emailConfirmed: true,
-          },
-        }
-      );
-      if (response.acknowledged) {
-        // write send mail function here
-        // sendEmail({
-        //   to: decodedToken.email as string,
-        //   subject: "Deonicode: Welcome",
-        //   message: welcomeEmail(decodedToken.username as string),
-        // });
-        res.redirect(301, `${process.env.FRONTEND_URL}`);
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { id: decodedToken.id } });
+      if (user) {
+        user.set({ emailConfirmed: true });
+        await user
+          .save()
+          .then(() => {
+            // write send mail function here
+            // sendEmail({
+            //   to: decodedToken.email as string,
+            //   subject: "Deonicode: Welcome",
+            //   message: welcomeEmail(decodedToken.username as string),
+            // });
+            return res.status(200).json({
+              message: "success",
+            });
+          })
+          .catch((err: any) => {
+            return res.status(500).json({
+              message: "email verification failed",
+              error: err,
+            });
+          });
       } else {
-        res.status(500).json({
-          message: "email verification failed",
+        return res.status(404).json({
+          message: "user not found",
         });
       }
     } catch (error) {
-      console.error("error in email verification", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async login(req: Request, res: Response) {
     try {
-      const user = await Expert.findOne({ email: req.body.email });
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { email: req.body.email } });
       if (user) {
         if (user.emailConfirmed === false) {
           return res.status(401).json({
@@ -103,7 +112,7 @@ class ExpertController {
             if (result) {
               const token: string = jwt.sign(
                 {
-                  id: user._id,
+                  id: user.id,
                   phone: user.phone,
                   email: user.email,
                 },
@@ -126,17 +135,19 @@ class ExpertController {
       }
     } catch (error) {
       console.error("user login error", error);
-      return res.status(500);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async update(req: Request, res: Response) {
-    const user = await Expert.updateOne(
-      {
-        _id: req.params.id,
-      },
-      {
-        $set: {
+    try {
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { id: req.params.id } });
+      if (user) {
+        user.set({
           firstname: req.body.firstname,
           lastname: req.body.lastname,
           phone: req.body.phone,
@@ -166,26 +177,39 @@ class ExpertController {
             IBAN: req.body.IBAN,
             SWIFTBIC: req.body.SWIFTBIC,
           },
-        },
+        });
+        await user
+          .save()
+          .then((resUser) => {
+            console.log(resUser);
+            const token: string = jwt.sign(
+              {
+                id: resUser?.id,
+                phone: resUser?.phone,
+                email: resUser?.email,
+              },
+              process.env.JWT_SECRET as string
+            );
+            return res.status(200).json({
+              message: "success",
+              token,
+            });
+          })
+          .catch((err: any) => {
+            return res.status(500).json({
+              message: "email verification failed",
+              error: err,
+            });
+          });
+      } else {
+        return res.status(404).json({
+          message: "user not found",
+        });
       }
-    );
-    if (user.acknowledged) {
-      const newuser = await Expert.findOne({ _id: req.params.id });
-      const token: string = jwt.sign(
-        {
-          id: newuser?._id,
-          phone: newuser?.phone,
-          email: newuser?.email,
-        },
-        process.env.JWT_SECRET as string
-      );
-      res.status(200).json({
-        message: "success",
-        token: token,
-      });
-    } else {
-      res.status(404).json({
-        message: "user not found",
+    } catch (error) {
+      return res.status(500).json({
+        message: "an error occured",
+        error,
       });
     }
   }
@@ -209,54 +233,39 @@ class ExpertController {
       });
 
       // Find and delete current image if it exist
-      const user = await Expert.findOne({ _id: req.params.id });
-      if (user?.avatar !== null) {
-        const filePathToDelete = path.join(
-          __dirname,
-          "uploads/expert/profileImages",
-          user?.avatar.doc
-        );
-        // Use fs.unlink to delete the file
-        fs.unlink(appRoot, (err: any) => {
-          if (err) {
-            console.error(`Error deleting file: ${err.message}`);
-          } else {
-            console.log(`File ${filePathToDelete} deleted successfully.`);
-          }
-        });
-      }
-
-      // upload new image to database
-      const profileImage: any[] = Object.entries(files)[0];
-      const image = {
-        doc: profileImage[1].name,
-        key: profileImage[0],
-      };
-
-      const updatedUser = await Expert.updateOne(
-        {
-          _id: req.params.id,
-        },
-        {
-          $set: {
-            avatar: image,
-          },
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { id: req.params.id } });
+      if (user) {
+        if (user?.avatar !== null) {
+          const filePathToDelete = path.join(
+            __dirname,
+            "uploads/expert/profileImages",
+            user.avatar!.doc
+          );
+          // Use fs.unlink to delete the file
+          fs.unlink(appRoot, (err: any) => {
+            if (err) {
+              console.error(`Error deleting file: ${err.message}`);
+            } else {
+              console.log(`File ${filePathToDelete} deleted successfully.`);
+            }
+          });
         }
-      );
 
-      if (updatedUser.acknowledged) {
-        const newuser = await Expert.findOne({ _id: req.params.id });
-        const token: string = jwt.sign(
-          {
-            id: newuser?._id,
-            phone: newuser?.phone,
-            email: newuser?.email,
-          },
-          process.env.JWT_SECRET as string
-        );
-        res.status(200).json({
-          message: "success",
-          token: token,
+        // upload new image to database
+        const profileImage: any[] = Object.entries(files)[0];
+        const image = {
+          doc: profileImage[1].name,
+          key: profileImage[0],
+        };
+
+        user.set({
+          avatar: image,
+        });
+        await user.save().then(() => {
+          return res.status(200).json({
+            message: "success",
+          });
         });
       } else {
         res.status(404).json({
@@ -265,59 +274,72 @@ class ExpertController {
       }
     } catch (error) {
       console.error("error uploading profile image", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async updatePassword(req: Request, res: Response) {
-    let user = await Expert.findOne({ _id: req.params.id });
-    if (user) {
-      const { currentPassword, newPassword } = req.body;
-      bcrypt
-        .compare(currentPassword, user.password!)
-        .then((match: any) => {
-          if (match) {
-            bcrypt.hash(newPassword, 10, (error: any, hash: any) => {
-              if (error) {
-                return res.status(500).json({
-                  error: error,
-                });
-              }
-              const passwordUpdate = {
-                password: hash,
-              };
-              user = _.extend(user, passwordUpdate);
-              if (user) {
-                user
-                  .save()
-                  .then((result: any) => {
-                    res.status(200).json({
-                      message: "success",
-                    });
-                  })
-                  .catch((error: any) => {
-                    res.status(500).json({
-                      error: error,
-                    });
+    try {
+      ExpertMap(sequelizeDB);
+      let user = await Expert.findOne({ where: { id: req.params.id } });
+      if (user) {
+        const { currentPassword, newPassword } = req.body;
+        bcrypt
+          .compare(currentPassword, user.password!)
+          .then((match: any) => {
+            if (match) {
+              bcrypt.hash(newPassword, 10, (error: any, hash: any) => {
+                if (error) {
+                  return res.status(500).json({
+                    error: error,
                   });
-              }
+                }
+                const passwordUpdate = {
+                  password: hash,
+                };
+                user = _.extend(user, passwordUpdate);
+                if (user) {
+                  user
+                    .save()
+                    .then((result: any) => {
+                      res.status(200).json({
+                        message: "success",
+                      });
+                    })
+                    .catch((error: any) => {
+                      res.status(500).json({
+                        error: error,
+                      });
+                    });
+                }
+              });
+            } else {
+              return res.status(500).json({
+                message: "passwords do not match",
+              });
+            }
+          })
+          .catch((err: any) => {
+            return res.status(401).json({
+              error: err,
             });
-          } else {
-            return res.status(500).json({
-              message: "passwords do not match",
-            });
-          }
-        })
-        .catch((err: any) => {
-          return res.status(401).json({
-            error: err,
           });
-        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async user(req: Request, res: Response) {
     try {
-      const user = await Expert.findOne({ _id: req.params.id });
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         return res.status(200).json(user);
       } else {
@@ -327,12 +349,17 @@ class ExpertController {
       }
     } catch (error) {
       console.error("error fetching user", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async users(req: Request, res: Response) {
     try {
-      const users = await Expert.find().sort({ createdAt: -1 });
+      ExpertMap(sequelizeDB);
+      const users = await Expert.findAll();
       if (users) {
         return res.status(200).json(users);
       } else {
@@ -342,16 +369,20 @@ class ExpertController {
       }
     } catch (error) {
       console.error("error fetching users", error);
+      return res.status(500).json({
+        message: "error fetching users",
+      });
     }
   }
 
   async forgotPassword(req: Request, res: Response) {
     try {
-      const user = await Expert.findOne({ email: req.body.email });
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({ where: { email: req.body.email } });
       if (user) {
         const resetToken: string = jwt.sign(
           {
-            id: user._id,
+            id: user.id,
             email: user.email,
             phone: user.phone,
           },
@@ -377,12 +408,16 @@ class ExpertController {
       }
     } catch (error) {
       console.error("error in forgot password", error);
+      return res.status(500).json({
+        message: "an error occured",
+      });
     }
   }
 
   async newPassword(req: Request, res: Response) {
     try {
-      let user = await Expert.findOne({ _id: req.params.id });
+      ExpertMap(sequelizeDB);
+      let user = await Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {
@@ -426,6 +461,9 @@ class ExpertController {
       }
     } catch (error) {
       console.error("error in new password", error);
+      return res.status(500).json({
+        message: "an error occured",
+      });
     }
   }
 }
