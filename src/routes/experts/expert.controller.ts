@@ -417,8 +417,8 @@ class ExpertController {
         const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
         sendEmail({
           to: user.email as string,
-          subject: verificationCodeTitle(),
-          message: verificationCode(),
+          subject: "test",
+          message: "hello",
         });
         return res.status(200).json({
           message: "success, check your inbox",

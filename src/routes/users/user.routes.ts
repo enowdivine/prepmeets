@@ -5,7 +5,8 @@ import fileUpload from "express-fileupload";
 import fileExtLimiter from "../../middleware/fileUpload/fileExtLimiter";
 import fileSizeLimiter from "../../middleware/fileUpload/fileSizeLimiter";
 import filesPayloadExists from "../../middleware/fileUpload/filePayloadExists";
-import UserAuthMiddleware from "../../middleware/auth/verifyUser"; // user auth middleware
+import UserAuthMiddleware from "../../middleware/auth/verifyUser";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const user = new UserCtl();
@@ -201,7 +202,7 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: user was not found
  */
-router.get("/:id", user.user);
+router.get("/:id", UserAuthMiddleware, user.user);
 
 /**
  * @swagger
@@ -219,7 +220,7 @@ router.get("/:id", user.user);
  *                          items:
  *                              $ref: '#/components/schemas/User'
  */
-router.get("/", user.users);
+router.get("/", verifyToken, user.users);
 
 /**
  * @swagger
@@ -256,7 +257,7 @@ router.get("/", user.users);
  */
 router.put(
   "/upload-profile-image/:id",
-
+  UserAuthMiddleware,
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
   fileExtLimiter([".png", ".jpg", ".jpeg"]),
@@ -295,7 +296,7 @@ router.put(
  *          500:
  *              description: an error occured
  */
-router.put("/update-user/:id", user.update);
+router.put("/update-user/:id", UserAuthMiddleware, user.update);
 
 /**
  * @swagger
@@ -337,7 +338,7 @@ router.put("/update-user/:id", user.update);
  *          500:
  *              description: an error occured
  */
-router.put("/update-password/:id", user.updatePassword);
+router.put("/update-password/:id", UserAuthMiddleware, user.updatePassword);
 
 /**
  * @swagger
