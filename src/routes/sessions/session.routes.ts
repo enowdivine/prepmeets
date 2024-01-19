@@ -35,7 +35,7 @@ const session = new SessionCtl();
  *                 type: string
  *                 description: starter, recommended, or best deal
  *              paymentAmount:
- *                 type: string
+ *                 type: number
  *                 description: payment amount
  *              duration:
  *                  type: string
@@ -210,6 +210,6 @@ router.get("/", verifyToken, session.sessions);
  *          500:
  *              description: an error occured
  */
-router.put("/update-session/:id", userAuthMiddleware, session.updateStatus);
+router.put("/update-status/:id", verifyToken, session.updateStatus);
 
 export default router;

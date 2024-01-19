@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Rating, { RatingMap } from "./rating.model";
-import expertModel from "../experts/expert.model";
+import ExpertModel, { ExpertMap } from "../experts/expert.model";
 import sequelizeDB from "../../config/db";
 
 class RatingController {
@@ -23,13 +23,15 @@ class RatingController {
           if (expertRatings && expertRatings.length > 0) {
             let count = 0;
             expertRatings.forEach((item: any) => {
-              return (count += item.rating);
+              return (count += item.dataValues.rating);
             });
             const newRate =
               Math.round((count / expertRatings.length) * 10) / 10;
+
             // expert update
-            const expert = await expertModel.findOne({
-              where: { email: req.body.email },
+            ExpertMap(sequelizeDB);
+            const expert = await ExpertModel.findOne({
+              where: { id: Number(req.body.expertId) },
             });
             expert?.set({ rating: newRate });
             expert?.save().then(() => {

@@ -5,6 +5,7 @@ import fileExtLimiter from "../../middleware/fileUpload/fileExtLimiter";
 import fileSizeLimiter from "../../middleware/fileUpload/fileSizeLimiter";
 import filesPayloadExists from "../../middleware/fileUpload/filePayloadExists";
 import ExpertAuthMiddleware from "../../middleware/auth/verifyExpert";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const user = new ExpertCtl();
@@ -251,7 +252,7 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: expert was not found
  */
-router.get("/:id", ExpertAuthMiddleware, user.user);
+router.get("/:id", verifyToken, user.user);
 
 /**
  * @swagger
@@ -267,9 +268,9 @@ router.get("/:id", ExpertAuthMiddleware, user.user);
  *                      schema:
  *                          type: array
  *                          items:
- *                              $ref: '#/components/schemas/Experts'
+ *                              $ref: '#/components/schemas/Expert'
  */
-router.get("/", user.users);
+router.get("/", verifyToken, user.users);
 
 /**
  * @swagger
@@ -422,6 +423,6 @@ router.put("/update-password/:id", ExpertAuthMiddleware, user.updatePassword);
  *          500:
  *              description: an error occured
  */
-router.put("/new-password/:id", ExpertAuthMiddleware, user.newPassword);
+router.put("/new-password/:id", user.newPassword);
 
 export default router;

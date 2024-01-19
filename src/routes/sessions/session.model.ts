@@ -6,7 +6,7 @@ export default class Session extends Model {
   public clientId?: string;
   public sessionType?: string;
   public paymentType?: string;
-  public paymentAmount?: string;
+  public paymentAmount?: number;
   public duration?: string;
   public sessionDate?: Date;
   public sessionStatus?: string;
@@ -14,7 +14,7 @@ export default class Session extends Model {
   public prepmeetCommission?: number;
 }
 
-export const SessionMap = (sequelize: Sequelize) => {
+export const SessionMap = async (sequelize: Sequelize) => {
   Session.init(
     {
       id: {
@@ -31,7 +31,7 @@ export const SessionMap = (sequelize: Sequelize) => {
         defaultValue: "",
       },
       sessionType: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         defaultValue: 0,
       },
       paymentType: {
@@ -39,8 +39,8 @@ export const SessionMap = (sequelize: Sequelize) => {
         defaultValue: "",
       },
       paymentAmount: {
-        type: DataTypes.STRING,
-        defaultValue: "",
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
       },
       duration: {
         type: DataTypes.STRING,
@@ -48,11 +48,11 @@ export const SessionMap = (sequelize: Sequelize) => {
       },
       sessionDate: {
         type: DataTypes.DATE,
-        defaultValue: 0,
+        defaultValue: null,
       },
       sessionStatus: {
         type: DataTypes.STRING,
-        defaultValue: "",
+        defaultValue: "pending",
       },
       paymentStatus: {
         type: DataTypes.STRING,
@@ -69,5 +69,5 @@ export const SessionMap = (sequelize: Sequelize) => {
       modelName: "Session", // explicitly set modelName
     }
   );
-  Session.sync();
+  await Session.sync({ alter: true });
 };

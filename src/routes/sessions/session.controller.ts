@@ -19,10 +19,10 @@ class SessionController {
       };
       SessionMap(sequelizeDB);
       Session.create(booking)
-        .then((response) => {
+        .then((booking) => {
           res.status(201).json({
             message: "success",
-            booking: response,
+            booking,
           });
         })
         .catch((err) => {
@@ -129,7 +129,8 @@ class SessionController {
       SessionMap(sequelizeDB);
       const session = await Session.findOne({ where: { id: req.params.id } });
       if (session) {
-        session.sessionStatus = req.body.status;
+        console.log(session);
+        session.sessionStatus = req.body.sessionStatus;
         await session.save().then(async () => {
           return res.status(200).json({
             message: "session status updated",

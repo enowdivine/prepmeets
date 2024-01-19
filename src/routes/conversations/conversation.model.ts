@@ -2,10 +2,10 @@ import { Sequelize, DataTypes, Model } from "sequelize";
 
 export default class Conversation extends Model {
   public id?: number;
-  public members?: Array<JSON>;
+  public members?: Array<String>;
 }
 
-export const ConversationMap = (sequelize: Sequelize) => {
+export const ConversationMap = async (sequelize: Sequelize) => {
   Conversation.init(
     {
       id: {
@@ -14,7 +14,7 @@ export const ConversationMap = (sequelize: Sequelize) => {
         primaryKey: true,
       },
       members: {
-        type: DataTypes.ARRAY,
+        type: DataTypes.ARRAY(DataTypes.STRING),
         defaultValue: [],
       },
     },
@@ -24,5 +24,5 @@ export const ConversationMap = (sequelize: Sequelize) => {
       modelName: "Conversation", // explicitly set modelName
     }
   );
-  Conversation.sync();
+  await Conversation.sync({ alter: true });
 };

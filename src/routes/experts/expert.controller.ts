@@ -7,6 +7,15 @@ import _ from "lodash";
 const fs = require("fs");
 const path = require("path");
 import { appRoot } from "../..";
+import sendEmail from "../../services/email/sendEmail";
+import {
+  verifyEmail,
+  verifyEmailTitle,
+} from "./templates/verifyEmail/verifyEmail";
+import {
+  verificationCode,
+  verificationCodeTitle,
+} from "./templates/verificationCode/verificationCode";
 
 class ExpertController {
   async register(req: Request, res: Response) {
@@ -28,20 +37,32 @@ class ExpertController {
         havecertifications: req.body.havecertifications,
         password: hash,
       };
-      console.log(userData);
-      const newuser = await Expert.create(userData);
-      const token: string = jwt.sign(
-        {
-          id: newuser.id,
-          email: newuser.email,
-          phone: newuser.phone,
-        },
-        process.env.JWT_SECRET as string
-      );
-      res.status(201).json({
-        message: "success",
-        token,
-      });
+      await Expert.create(userData)
+        .then((newuser) => {
+          const token: string = jwt.sign(
+            {
+              id: newuser.id,
+              email: newuser.email,
+              phone: newuser.phone,
+            },
+            process.env.JWT_SECRET as string
+          );
+          sendEmail({
+            to: newuser.email as string,
+            subject: verifyEmailTitle(req.body.firstname),
+            message: verifyEmail(),
+          });
+          res.status(201).json({
+            message: "success",
+            token,
+          });
+        })
+        .catch((err) => {
+          res.status(400).json({
+            message: "an error occured",
+            err,
+          });
+        });
     } catch (error) {
       console.error("user registration error", error);
       return res.status(500).json({
@@ -64,7 +85,6 @@ class ExpertController {
         await user
           .save()
           .then(() => {
-            // write send mail function here
             // sendEmail({
             //   to: decodedToken.email as string,
             //   subject: "Deonicode: Welcome",
@@ -155,7 +175,7 @@ class ExpertController {
           lastname: req.body.lastname,
           phone: req.body.phone,
           email: req.body.email,
-          bip: req.body.bio,
+          bio: req.body.bio,
           education: req.body.education,
           experience: req.body.experience,
           certificates: req.body.certificates,
@@ -184,7 +204,6 @@ class ExpertController {
         await user
           .save()
           .then((resUser) => {
-            console.log(resUser);
             const token: string = jwt.sign(
               {
                 id: resUser?.id,
@@ -374,6 +393,7 @@ class ExpertController {
       console.error("error fetching users", error);
       return res.status(500).json({
         message: "error fetching users",
+        error,
       });
     }
   }
@@ -395,12 +415,11 @@ class ExpertController {
           }
         );
         const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
-        // write send mail function here
-        // sendEmail({
-        //   to: user.email as string,
-        //   subject: "Deonicode: Password Reset",
-        //   message: forgotPasswordEmail(user.username as string, url),
-        // });
+        sendEmail({
+          to: user.email as string,
+          subject: verificationCodeTitle(),
+          message: verificationCode(),
+        });
         return res.status(200).json({
           message: "success, check your inbox",
         });

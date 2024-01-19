@@ -1,20 +1,20 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
 
-interface UserAttributes {
-  id: number;
-  role: string;
-  avatar: Record<string, any>;
-  firstname: string;
-  lastname: string;
-  email: string;
-  phone: number;
-  whatINeed: string;
-  location: string;
-  password: string;
-  emailConfirmed: boolean;
-  accountId: string;
-  provider: string;
-}
+// interface UserAttributes {
+//   id: number;
+//   role: string;
+//   avatar: Record<string, any>;
+//   firstname: string;
+//   lastname: string;
+//   email: string;
+//   phone: number;
+//   whatINeed: string;
+//   location: string;
+//   password: string;
+//   emailConfirmed: boolean;
+//   accountId: string;
+//   provider: string;
+// }
 
 export default class User extends Model {
   public id?: number;
@@ -32,7 +32,7 @@ export default class User extends Model {
   public provider?: string;
 }
 
-export const UserMap = (sequelize: Sequelize) => {
+export const UserMap = async (sequelize: Sequelize) => {
   User.init(
     {
       id: {
@@ -97,5 +97,5 @@ export const UserMap = (sequelize: Sequelize) => {
       modelName: "User", // explicitly set modelName
     }
   );
-  User.sync();
+  await User.sync({ alter: true });
 };

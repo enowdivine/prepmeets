@@ -8,7 +8,7 @@ export default class Message extends Model {
   public message?: string;
 }
 
-export const MessageMap = (sequelize: Sequelize) => {
+export const MessageMap = async (sequelize: Sequelize) => {
   Message.init(
     {
       id: {
@@ -25,8 +25,8 @@ export const MessageMap = (sequelize: Sequelize) => {
         defaultValue: "",
       },
       receiverId: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+        type: DataTypes.STRING,
+        defaultValue: "",
       },
       message: {
         type: DataTypes.STRING,
@@ -39,5 +39,5 @@ export const MessageMap = (sequelize: Sequelize) => {
       modelName: "Message", // explicitly set modelName
     }
   );
-  Message.sync();
+  await Message.sync({ alter: true });
 };

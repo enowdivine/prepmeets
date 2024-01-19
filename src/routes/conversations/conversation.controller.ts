@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { Op } from "@sequelize/core";
 import Conversation, { ConversationMap } from "./conversation.model";
 import sequelizeDB from "../../config/db";
 
@@ -12,7 +13,10 @@ class ConversationController {
       const savedConversation = await Conversation.create(newConversation);
       return res.status(200).json(savedConversation);
     } catch (error) {
-      return res.status(500).json(error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
@@ -20,11 +24,18 @@ class ConversationController {
     try {
       ConversationMap(sequelizeDB);
       const conversations = await Conversation.findAll({
-        where: { members: { $in: [req.params.id] } },
+        where: {
+          members: {
+            [Op.contains]: [req.params.id],
+          },
+        },
       });
       return res.status(200).json(conversations);
     } catch (error) {
-      return res.status(500).json(error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 }

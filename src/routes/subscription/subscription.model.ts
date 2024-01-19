@@ -5,7 +5,7 @@ export default class Subscription extends Model {
   public email?: string;
 }
 
-export const SubscriptionMap = (sequelize: Sequelize) => {
+export const SubscriptionMap = async (sequelize: Sequelize) => {
   Subscription.init(
     {
       id: {
@@ -24,5 +24,5 @@ export const SubscriptionMap = (sequelize: Sequelize) => {
       modelName: "Subscription", // explicitly set modelName
     }
   );
-  Subscription.sync();
+  await Subscription.sync({ alter: true });
 };

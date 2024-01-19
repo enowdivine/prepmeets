@@ -8,7 +8,7 @@ export default class Rating extends Model {
   public comment?: string;
 }
 
-export const RatingMap = (sequelize: Sequelize) => {
+export const RatingMap = async (sequelize: Sequelize) => {
   Rating.init(
     {
       id: {
@@ -39,5 +39,5 @@ export const RatingMap = (sequelize: Sequelize) => {
       modelName: "Rating", // explicitly set modelName
     }
   );
-  Rating.sync();
+  await Rating.sync({ alter: true });
 };

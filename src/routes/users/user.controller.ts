@@ -155,6 +155,7 @@ class UserController {
           email: req.body.email,
           phone: req.body.phone,
           whatINeed: req.body.whatINeed,
+          location: req.body.location,
         });
         await user
           .save()

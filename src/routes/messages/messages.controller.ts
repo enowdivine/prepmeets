@@ -15,7 +15,10 @@ class MessagesController {
       const savedMessage = await Messages.create(message);
       res.status(200).json(savedMessage);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
@@ -27,7 +30,10 @@ class MessagesController {
       });
       res.status(200).json(messages);
     } catch (error) {
-      res.status(500).json(error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 }

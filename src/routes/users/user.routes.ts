@@ -61,7 +61,7 @@ const user = new UserCtl();
  *              phone: 672491296
  *              whatINeed: To be a pro in devops
  *              location: Cameroon
- *              password: 12345678
+ *              password: tester
  *              emailConfirmed: false
  */
 
@@ -201,7 +201,7 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: user was not found
  */
-router.get("/:id", UserAuthMiddleware, user.user);
+router.get("/:id", user.user);
 
 /**
  * @swagger
@@ -256,7 +256,7 @@ router.get("/", user.users);
  */
 router.put(
   "/upload-profile-image/:id",
-  UserAuthMiddleware,
+
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
   fileExtLimiter([".png", ".jpg", ".jpeg"]),
@@ -295,7 +295,7 @@ router.put(
  *          500:
  *              description: an error occured
  */
-router.put("/update-user/:id", UserAuthMiddleware, user.update);
+router.put("/update-user/:id", user.update);
 
 /**
  * @swagger
@@ -337,7 +337,7 @@ router.put("/update-user/:id", UserAuthMiddleware, user.update);
  *          500:
  *              description: an error occured
  */
-router.put("/update-password/:id", UserAuthMiddleware, user.updatePassword);
+router.put("/update-password/:id", user.updatePassword);
 
 /**
  * @swagger
@@ -372,7 +372,7 @@ router.put("/update-password/:id", UserAuthMiddleware, user.updatePassword);
  *          500:
  *              description: an error occured
  */
-router.put("/new-password/:id", UserAuthMiddleware, user.newPassword);
+router.put("/new-password/:id", user.newPassword);
 
 // FACEBOOK AUTHENTICATION ROUTES
 // router.get("/facebook-login", facebook.authenticate);

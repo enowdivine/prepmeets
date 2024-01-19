@@ -20,7 +20,7 @@ export default class Expert extends Model {
   public gender?: string;
   public dateOfBirth?: Date | null;
   public location?: string;
-  public focusarea?: Array<JSON> | [];
+  public focusarea?: Array<string> | [];
 
   public havecertifications?: boolean;
   public timeNotice?: string;
@@ -116,7 +116,7 @@ export const ExpertMap = async (sequelize: Sequelize) => {
         defaultValue: "",
       },
       focusarea: {
-        type: DataTypes.ARRAY(DataTypes.JSON),
+        type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: true,
         defaultValue: [],
       },
@@ -178,7 +178,7 @@ export const ExpertMap = async (sequelize: Sequelize) => {
       modelName: "Expert", // explicitly set modelName
     }
   );
-  await Expert.sync();
+  await Expert.sync({ alter: true });
 };
 
 // pricing: {
