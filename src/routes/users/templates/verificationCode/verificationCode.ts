@@ -1,9 +1,15 @@
-export function verificationCode() {
+export function verificationCodeTitle() {
   return `
-  <div class="email-content">
+  <p>Activation Code</p>
+    `;
+}
+
+export function verificationCode(code: any) {
+  return `
+<div class="email-content">
   <img src="https://via.placeholder.com/90" alt="Welcome" />
   <div class="activation-code">
-    <span>435264</span>
+    <span>${code}</span>
   </div>
   <p>
     You are ready to setup your account. Copy your activation code or
@@ -13,5 +19,5 @@ export function verificationCode() {
     <a href="#" class="action_btn">Activate your account</a>
   </div>
 </div>
-  `;
+    `;
 }

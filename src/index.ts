@@ -37,7 +37,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:5000",
+        url: "http://localhost:4000",
       },
     ],
   },
@@ -82,7 +82,7 @@ app.get("/", (req: Request, res: Response) => {
   res.render("index");
 });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 server.listen(port, async () => {
   console.log(`Server running on http://localhost:${port}`);

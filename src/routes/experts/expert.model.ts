@@ -47,7 +47,7 @@ export const ExpertMap = async (sequelize: Sequelize) => {
       },
       role: {
         type: DataTypes.STRING,
-        defaultValue: "client",
+        defaultValue: "expert",
       },
       avatar: {
         type: DataTypes.STRING,

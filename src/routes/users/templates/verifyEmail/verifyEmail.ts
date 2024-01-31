@@ -1,9 +1,18 @@
-export function verifyEmail() {
+export function verifyEmailTitle(username: string) {
+  return `
+  <p>
+  Hi <span class="username">${username}</span>, Just a friendly reminder to
+  verify your email address.
+  </p>
+  `;
+}
+
+export function verifyEmail(username: string, url: string) {
   return `
   <div class="email-content">
   <img src="https://via.placeholder.com/90" alt="Welcome" />
   <p>
-    Hey James, you are almost ready to start your enjoying Prepmeets.
+    Hey ${username}, you are almost ready to start your enjoying Prepmeets.
     Simply click the purple button below to verify your email address.
   </p>
   <p>
@@ -11,7 +20,7 @@ export function verifyEmail() {
     address.
   </p>
   <div class="action_btn_div">
-    <a href="#" class="action_btn">Verify email address</a>
+    <a href="${url}" target="_blank" class="action_btn">Verify email address</a>
   </div>
   </div>
     `;

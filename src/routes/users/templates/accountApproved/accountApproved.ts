@@ -1,4 +1,14 @@
-export function accountApproved(username: string, price: any) {
+export function accountApprovedTitle(username: string) {
+  return `
+  <p>
+  Hi <span class="username">${username}</span>, your
+  <span class="brand-title-color">Prep</span>meets account has been
+  approved!
+  </p>
+  `;
+}
+
+export function accountApproved() {
   return `
   <div class="email-content">
   <img src="https://via.placeholder.com/90" alt="Welcome" />

@@ -270,7 +270,7 @@ router.get("/:id", verifyToken, user.user);
  *                          items:
  *                              $ref: '#/components/schemas/Expert'
  */
-router.get("/", verifyToken, user.users);
+router.get("/", user.users);
 
 /**
  * @swagger
@@ -426,3 +426,13 @@ router.put("/update-password/:id", ExpertAuthMiddleware, user.updatePassword);
 router.put("/new-password/:id", user.newPassword);
 
 export default router;
+
+// {
+//   "firstname": "Enow",
+//   "lastname": "Divine",
+//   "email": "sirdivine16@gmail.com",
+//   "phone": "672491296",
+//   "password": "tester",
+//   "focusarea": ["devops", "blockchain"],
+//   "havecertifications": true
+// }

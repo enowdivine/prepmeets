@@ -7,6 +7,23 @@ import _ from "lodash";
 const fs = require("fs");
 const path = require("path");
 import { appRoot } from "../..";
+import sendEmail from "../../services/email/sendEmail";
+import {
+  verifyEmail,
+  verifyEmailTitle,
+} from "./templates/verifyEmail/verifyEmail";
+import {
+  accountApproved,
+  accountApprovedTitle,
+} from "./templates/accountApproved/accountApproved";
+import {
+  resetPassword,
+  resetPasswordTitle,
+} from "./templates/resetPassword/resetPassword";
+import {
+  welcomeBack,
+  welcomeBackTitle,
+} from "./templates/welcomeBack/welcomeBack";
 
 class UserController {
   async register(req: Request, res: Response) {
@@ -32,11 +49,19 @@ class UserController {
       const token: string = jwt.sign(
         {
           id: newuser.id,
+          role: newuser.role,
           email: newuser.email,
           phone: newuser.phone,
         },
         process.env.JWT_SECRET as string
       );
+      const url = `${process.env.SERVER_URL}/api/${process.env.API_VERSION}/clients/verification/${token}`;
+      sendEmail({
+        to: newuser.email as string,
+        subject: "Prepmeet Email Verification",
+        title: verifyEmailTitle(req.body.firstname),
+        message: verifyEmail(req.body.firstname, url),
+      });
       res.status(201).json({
         message: "success",
         token,
@@ -63,12 +88,12 @@ class UserController {
         await user
           .save()
           .then(() => {
-            // write send mail function here
-            // sendEmail({
-            //   to: decodedToken.email as string,
-            //   subject: "Deonicode: Welcome",
-            //   message: welcomeEmail(decodedToken.username as string),
-            // });
+            sendEmail({
+              to: decodedToken.email as string,
+              subject: `Welcome ${user.firstname}`,
+              title: accountApprovedTitle(user.firstname as string),
+              message: accountApproved(),
+            });
             return res.status(200).json({
               message: "success",
             });
@@ -115,6 +140,7 @@ class UserController {
               const token: string = jwt.sign(
                 {
                   id: user.id,
+                  role: user.role,
                   phone: user.phone,
                   email: user.email,
                 },
@@ -164,6 +190,7 @@ class UserController {
             const token: string = jwt.sign(
               {
                 id: resUser?.id,
+                role: resUser?.role,
                 phone: resUser?.phone,
                 email: resUser?.email,
               },
@@ -362,6 +389,7 @@ class UserController {
         const resetToken: string = jwt.sign(
           {
             id: user.id,
+            role: user.role,
             email: user.email,
             phone: user.phone,
           },
@@ -370,13 +398,13 @@ class UserController {
             expiresIn: "1h",
           }
         );
-        const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
-        // write send mail function here
-        // sendEmail({
-        //   to: user.email as string,
-        //   subject: "Deonicode: Password Reset",
-        //   message: forgotPasswordEmail(user.username as string, url),
-        // });
+        const url = `${process.env.FRONTEND_URL}/api/${process.env.API_VERSION}/clients/new-password/${resetToken}`;
+        sendEmail({
+          to: user.email as string,
+          subject: "Forgot password - Prepmeet",
+          title: resetPasswordTitle(),
+          message: resetPassword(url),
+        });
         return res.status(200).json({
           message: "success, check your inbox",
         });
@@ -421,6 +449,12 @@ class UserController {
                   },
                   process.env.JWT_SECRET as string
                 );
+                sendEmail({
+                  to: result.email as string,
+                  subject: `Welcome back ${result.firstname}`,
+                  title: welcomeBackTitle(result.firstname),
+                  message: welcomeBack(),
+                });
                 res.status(200).json({
                   message: "success",
                   token: token,

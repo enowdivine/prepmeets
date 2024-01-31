@@ -7,11 +7,12 @@ dotenv.config();
 interface Option {
   to: string;
   subject: string;
+  title: string;
   message: string;
 }
 
 export default function mailer(option: Option): void {
-  const html: string = email(option.subject, option.message);
+  const html: string = email(option.title, option.message);
   const transporter: any = nodemailer.createTransport({
     service: process.env.EMAIL_SERVICE,
     // host: process.env.EMAIL_HOST,
