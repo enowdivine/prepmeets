@@ -1,50 +1,101 @@
-import mongoose from "mongoose";
+import { Sequelize, DataTypes, Model } from "sequelize";
 
-const user = new mongoose.Schema(
-  {
-    role: {
-      type: String,
-      default: "client",
-    },
-    avatar: {
-      type: Object,
-      default: null,
-    },
-    firstname: {
-      type: String,
-      required: [true, "firstname is required"],
-    },
-    lastname: {
-      type: String,
-      required: [true, "lastname is required"],
-    },
-    email: {
-      type: String,
-      required: [true, "email is required"],
-    },
-    phone: {
-      type: Number,
-    },
-    whatINeed: {
-      type: String,
-      default: "",
-    },
-    location: {
-      type: String,
-      default: "",
-    },
-    password: {
-      type: String,
-      required: [true, "password is required"],
-    },
-    emailConfirmed: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+// interface UserAttributes {
+//   id: number;
+//   role: string;
+//   avatar: Record<string, any>;
+//   firstname: string;
+//   lastname: string;
+//   email: string;
+//   phone: number;
+//   whatINeed: string;
+//   location: string;
+//   password: string;
+//   emailConfirmed: boolean;
+//   accountId: string;
+//   provider: string;
+// }
 
-export default mongoose.model("User", user);
+export default class User extends Model {
+  public id?: number;
+  public role?: string;
+  public avatar?: string;
+  public firstname?: string;
+  public lastname?: string;
+  public email?: string;
+  public phone?: number;
+  public whatINeed?: string;
+  public location?: string;
+  public password?: string;
+  public emailConfirmed?: boolean;
+  public accountId?: string;
+  public provider?: string;
+}
+
+export const UserMap = async (sequelize: Sequelize) => {
+  User.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: "client",
+      },
+      avatar: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: "",
+      },
+      firstname: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      lastname: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      email: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      phone: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null,
+      },
+      whatINeed: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      location: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      password: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      emailConfirmed: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      accountId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      provider: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+    },
+    {
+      sequelize,
+      tableName: "users", // explicitly set the table name
+      modelName: "User", // explicitly set modelName
+    }
+  );
+  await User.sync({ alter: true });
+};

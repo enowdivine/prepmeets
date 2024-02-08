@@ -1,51 +1,73 @@
-import mongoose from "mongoose";
+import { Sequelize, DataTypes, Model } from "sequelize";
 
-const session = new mongoose.Schema(
-  {
-    expertId: {
-      type: String,
-      required: [true, "expertId is required"],
-    },
-    clientId: {
-      type: String,
-      required: [true, "clientId is required"],
-    },
-    sessionType: {
-      type: String,
-      required: [true, "sessionType is required"],
-    },
-    paymentType: {
-      type: String,
-      required: [true, "paymentType is required"],
-    },
-    paymentAmount: {
-      type: String,
-      required: [true, "payment amount is required"],
-    },
-    duration: {
-      type: String,
-      required: [true, "duration is required"],
-    },
-    sessionDate: {
-      type: Date,
-      required: [true, "sessionDate is required"],
-    },
-    sessionStatus: {
-      type: String,
-      default: "scheduled",
-    },
-    paymentStatus: {
-      type: String,
-      default: "pending",
-    },
-    prepmeetCommission: {
-      type: Number,
-      default: 0,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+export default class Session extends Model {
+  public id?: number;
+  public expertId?: string;
+  public clientId?: string;
+  public sessionType?: string;
+  public paymentType?: string;
+  public paymentAmount?: number;
+  public duration?: string;
+  public sessionDate?: Date;
+  public sessionStatus?: string;
+  public paymentStatus?: string;
+  public prepmeetCommission?: number;
+}
 
-export default mongoose.model("Session", session);
+export const SessionMap = async (sequelize: Sequelize) => {
+  Session.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      expertId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      clientId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      sessionType: {
+        type: DataTypes.STRING,
+        defaultValue: 0,
+      },
+      paymentType: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      paymentAmount: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
+      },
+      duration: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      sessionDate: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+      },
+      sessionStatus: {
+        type: DataTypes.STRING,
+        defaultValue: "pending",
+      },
+      paymentStatus: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      prepmeetCommission: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+    },
+    {
+      sequelize,
+      tableName: "sessions", // explicitly set the table name
+      modelName: "Session", // explicitly set modelName
+    }
+  );
+  await Session.sync({ alter: true });
+};

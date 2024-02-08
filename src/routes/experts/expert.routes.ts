@@ -4,6 +4,8 @@ import fileUpload from "express-fileupload";
 import fileExtLimiter from "../../middleware/fileUpload/fileExtLimiter";
 import fileSizeLimiter from "../../middleware/fileUpload/fileSizeLimiter";
 import filesPayloadExists from "../../middleware/fileUpload/filePayloadExists";
+import ExpertAuthMiddleware from "../../middleware/auth/verifyExpert";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const user = new ExpertCtl();
@@ -250,7 +252,7 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: expert was not found
  */
-router.get("/:id", user.user);
+router.get("/:id", verifyToken, user.user);
 
 /**
  * @swagger
@@ -266,7 +268,7 @@ router.get("/:id", user.user);
  *                      schema:
  *                          type: array
  *                          items:
- *                              $ref: '#/components/schemas/Experts'
+ *                              $ref: '#/components/schemas/Expert'
  */
 router.get("/", user.users);
 
@@ -305,6 +307,7 @@ router.get("/", user.users);
  */
 router.put(
   "/upload-profile-image/:id",
+  ExpertAuthMiddleware,
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
   fileExtLimiter([".png", ".jpg", ".jpeg"]),
@@ -343,7 +346,7 @@ router.put(
  *          500:
  *              description: an error occured
  */
-router.put("/update-expert/:id", user.update);
+router.put("/update-expert/:id", ExpertAuthMiddleware, user.update);
 
 /**
  * @swagger
@@ -385,7 +388,7 @@ router.put("/update-expert/:id", user.update);
  *          500:
  *              description: an error occured
  */
-router.put("/update-password/:id", user.updatePassword);
+router.put("/update-password/:id", ExpertAuthMiddleware, user.updatePassword);
 
 /**
  * @swagger
@@ -423,3 +426,13 @@ router.put("/update-password/:id", user.updatePassword);
 router.put("/new-password/:id", user.newPassword);
 
 export default router;
+
+// {
+//   "firstname": "Enow",
+//   "lastname": "Divine",
+//   "email": "sirdivine16@gmail.com",
+//   "phone": "672491296",
+//   "password": "tester",
+//   "focusarea": ["devops", "blockchain"],
+//   "havecertifications": true
+// }

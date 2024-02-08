@@ -1,6 +1,5 @@
 import express, { Request, Response, Application } from "express";
 import bodyParser = require("body-parser");
-import dbConnect from "./config/db";
 import dotenv from "dotenv";
 import cors from "cors";
 // api imports
@@ -13,6 +12,9 @@ import messageRoutes from "./routes/messages/messages.routes";
 import conversationRoutes from "./routes/conversations/conversation.routes";
 import subscriptionRoutes from "./routes/subscription/subscription.routes";
 
+// database import
+import sequelizeDB from "./config/db";
+
 // swagger imports
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
@@ -23,7 +25,6 @@ const path = require("path");
 export const appRoot = path.resolve(__dirname);
 
 dotenv.config();
-dbConnect(); // database connection
 
 // swagger options
 const options = {
@@ -36,7 +37,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:5000",
+        url: "http://localhost:4000",
       },
     ],
   },
@@ -60,6 +61,7 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
+app.set("view engine", "ejs");
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -76,10 +78,18 @@ app.use(`/api/${process.env.API_VERSION}/conversations`, conversationRoutes);
 app.use(`/api/${process.env.API_VERSION}/subscriptions`, subscriptionRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Prepmeets Server");
+  // res.send("Prepmeets Server");
+  res.render("index");
 });
 
-const port = process.env.PORT || 5000;
-server.listen(port, () => {
+const port = process.env.PORT || 4000;
+
+server.listen(port, async () => {
   console.log(`Server running on http://localhost:${port}`);
+  try {
+    await sequelizeDB.authenticate();
+    console.log("Database connected 🔥 !!");
+  } catch (error) {
+    console.error("Unable to connect to the database !!!", error);
+  }
 });

@@ -1,50 +1,47 @@
 import { Request, Response } from "express";
-import Rating from "./rating.model";
-import expertModel from "../experts/expert.model";
+import Rating, { RatingMap } from "./rating.model";
+import ExpertModel, { ExpertMap } from "../experts/expert.model";
+import sequelizeDB from "../../config/db";
 
 class RatingController {
   async create(req: Request, res: Response) {
     try {
-      const rating = new Rating({
+      const ratingData = {
         expertId: req.body.expertId,
         userId: req.body.userId,
         rating: req.body.rating,
         comment: req.body.comment,
-      });
-      await rating
-        .save()
+      };
+      RatingMap(sequelizeDB);
+      await Rating.create(ratingData)
         .then(async () => {
-          const expertRatings = await Rating.find({
-            expertId: req.body.expertId,
+          const expertRatings = await Rating.findAll({
+            where: { expertId: req.body.expertId },
           });
 
           // calculate rating
           if (expertRatings && expertRatings.length > 0) {
             let count = 0;
             expertRatings.forEach((item: any) => {
-              return (count += item.rating);
+              return (count += item.dataValues.rating);
             });
             const newRate =
               Math.round((count / expertRatings.length) * 10) / 10;
+
             // expert update
-            const expert = await expertModel.updateOne(
-              {
-                _id: req.body.expertId,
-              },
-              {
-                $set: {
-                  rating: newRate,
-                },
-              }
-            );
-            if (expert.acknowledged) {
+            ExpertMap(sequelizeDB);
+            const expert = await ExpertModel.findOne({
+              where: { id: Number(req.body.expertId) },
+            });
+            expert?.set({ rating: newRate });
+            expert?.save().then(() => {
               res.status(201).json({
                 message: "success",
               });
-            }
+            });
           } else {
             res.status(400).json({
-              message: "an error occured",
+              message: "error returning user ratings",
             });
           }
         })
@@ -56,13 +53,18 @@ class RatingController {
         });
     } catch (error) {
       console.error("error rating expert", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 
   async ratings(req: Request, res: Response) {
     try {
-      const ratings = await Rating.find({
-        expertId: req.params.id,
+      RatingMap(sequelizeDB);
+      const ratings = await Rating.findAll({
+        where: { expertId: req.params.id },
       });
       if (ratings) {
         return res.status(200).json(ratings);
@@ -73,6 +75,10 @@ class RatingController {
       }
     } catch (error) {
       console.error("error fetching ratings", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
     }
   }
 }

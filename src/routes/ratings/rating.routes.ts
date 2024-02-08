@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import Ratings from "./rating.controller";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const rating = new Ratings();
@@ -59,7 +60,7 @@ const rating = new Ratings();
  *          500:
  *              description: an error occured
  */
-router.post("/create", rating.create);
+router.post("/create", verifyToken, rating.create);
 
 /**
  * @swagger
@@ -85,6 +86,6 @@ router.post("/create", rating.create);
  *          404:
  *              description: rating not found
  */
-router.get("/expert/:id", rating.ratings);
+router.get("/expert/:id", verifyToken, rating.ratings);
 
 export default router;

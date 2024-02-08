@@ -1,5 +1,6 @@
 import express, { Router } from "express";
 import StripeController from "./stripe.controller";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const stripe = new StripeController();
@@ -41,7 +42,7 @@ const stripe = new StripeController();
  *                          items:
  *                              $ref: '#/components/schemas/Stripe'
  */
-router.get("/publishable-key", stripe.getPublishableKey);
+router.get("/publishable-key", verifyToken, stripe.getPublishableKey);
 
 /**
  * @swagger
@@ -59,6 +60,6 @@ router.get("/publishable-key", stripe.getPublishableKey);
  *          500:
  *              description: an error occured
  */
-router.post("/initiate-payment", stripe.initiatePayment);
+router.post("/initiate-payment", verifyToken, stripe.initiatePayment);
 
 export default router;

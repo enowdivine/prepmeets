@@ -1,16 +1,13 @@
-const mongoose = require("mongoose");
-require("dotenv").config();
+import { Sequelize } from "sequelize";
 
-// DATABASE CONNECTION
-const dbConnect = () => {
-  mongoose
-    .connect(process.env.DATABASE_URL as string, {
-      family: 4,
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
-    .then(() => console.log("Database connected 🔥 !!"))
-    .catch((err: any) => console.log(err));
-};
+const sequelize = new Sequelize(
+  process.env.POSTGRES_DATABASE as string,
+  process.env.POSTGRES_USERNAME as string,
+  process.env.POSTGRES_PASSWORD,
+  {
+    host: process.env.POSTGRES_HOST,
+    dialect: "postgres",
+  }
+);
 
-export default dbConnect;
+export default sequelize;

@@ -1,27 +1,43 @@
-import mongoose from "mongoose";
+import { Sequelize, DataTypes, Model } from "sequelize";
 
-const rating = new mongoose.Schema(
-  {
-    expertId: {
-      type: String,
-      required: [true, "expertId is required"],
-    },
-    userId: {
-      type: String,
-      required: [true, "userId is required"],
-    },
-    rating: {
-      type: Number,
-      required: [true, "rating is required"],
-    },
-    comment: {
-      type: String,
-      required: [true, "comment is required"],
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
+export default class Rating extends Model {
+  public id?: number;
+  public expertId?: string;
+  public userId?: string;
+  public rating?: number;
+  public comment?: string;
+}
 
-export default mongoose.model("Rating", rating);
+export const RatingMap = async (sequelize: Sequelize) => {
+  Rating.init(
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      expertId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      userId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      rating: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      comment: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+    },
+    {
+      sequelize,
+      tableName: "ratings", // explicitly set the table name
+      modelName: "Rating", // explicitly set modelName
+    }
+  );
+  await Rating.sync({ alter: true });
+};

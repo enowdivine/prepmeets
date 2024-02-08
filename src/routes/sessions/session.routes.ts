@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import SessionCtl from "./session.controller";
-// import { io } from "../../index";
+import userAuthMiddleware from "../../middleware/auth/verifyUser";
+import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const session = new SessionCtl();
@@ -34,7 +35,7 @@ const session = new SessionCtl();
  *                 type: string
  *                 description: starter, recommended, or best deal
  *              paymentAmount:
- *                 type: string
+ *                 type: number
  *                 description: payment amount
  *              duration:
  *                  type: string
@@ -79,7 +80,7 @@ const session = new SessionCtl();
  *          500:
  *              description: an error occured
  */
-router.post("/create", session.create);
+router.post("/create", userAuthMiddleware, session.create);
 
 /**
  * @swagger
@@ -104,7 +105,57 @@ router.post("/create", session.create);
  *          404:
  *              description: session was not found
  */
-router.get("/:id", session.session);
+router.get("/:id", verifyToken, session.session);
+
+/**
+ * @swagger
+ * /api/v1/sessions/client/{id}:
+ *   get:
+ *      summary: get client sessions by id
+ *      tags: [Session]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: client id
+ *      responses:
+ *          200:
+ *              description: returns a single session object
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Session'
+ *          404:
+ *              description: session was not found
+ */
+router.get("/client/:id", verifyToken, session.clientSessions);
+
+/**
+ * @swagger
+ * /api/v1/sessions/expert/{id}:
+ *   get:
+ *      summary: get expert sessions by id
+ *      tags: [Session]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: expert id
+ *      responses:
+ *          200:
+ *              description: returns a single session object
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Session'
+ *          404:
+ *              description: session was not found
+ */
+router.get("/expert/:id", verifyToken, session.expertSessions);
 
 /**
  * @swagger
@@ -122,7 +173,7 @@ router.get("/:id", session.session);
  *                          items:
  *                              $ref: '#/components/schemas/Session'
  */
-router.get("/", session.sessions);
+router.get("/", verifyToken, session.sessions);
 
 /**
  * @swagger
@@ -159,6 +210,6 @@ router.get("/", session.sessions);
  *          500:
  *              description: an error occured
  */
-router.put("/update-session/:id", session.updateStatus);
+router.put("/update-status/:id", verifyToken, session.updateStatus);
 
 export default router;
