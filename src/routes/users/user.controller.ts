@@ -479,6 +479,64 @@ class UserController {
       });
     }
   }
+
+  // SOCIAL AUTHENTICATION HANDLERS
+
+  async socialLogin(req: Request, res: Response) {
+    try {
+      UserMap(sequelizeDB);
+      const user = await User.findOne({
+        where: { accountId: req.body.accountId },
+      });
+      if (user) {
+        const token: string = jwt.sign(
+          {
+            id: user.id,
+            role: user.role,
+            email: user.email,
+            accountId: user.accountId,
+          },
+          process.env.JWT_SECRET as string
+        );
+        res.status(201).json({
+          message: "success",
+          token,
+        });
+      }
+      const userData = {
+        accountId: req.body.accountId,
+        provider: req.body.provider,
+        email: req.body.email,
+        emailConfirmed: true,
+      };
+      const newuser = await User.create(userData);
+      const token: string = jwt.sign(
+        {
+          id: newuser.id,
+          role: newuser.role,
+          email: newuser.email,
+          accountId: newuser.accountId,
+        },
+        process.env.JWT_SECRET as string
+      );
+      sendEmail({
+        to: newuser.email as string,
+        subject: `Welcome To Prepmeets`,
+        title: accountApprovedTitle(newuser?.firstname as string),
+        message: accountApproved(),
+      });
+      res.status(201).json({
+        message: "success",
+        token,
+      });
+    } catch (error) {
+      console.error("user registration error", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
 }
 
 export default UserController;

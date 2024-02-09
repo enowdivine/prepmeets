@@ -78,8 +78,7 @@ app.use(`/api/${process.env.API_VERSION}/conversations`, conversationRoutes);
 app.use(`/api/${process.env.API_VERSION}/subscriptions`, subscriptionRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  // res.send("Prepmeets Server");
-  res.render("index");
+  res.send("Prepmeets Server");
 });
 
 const port = process.env.PORT || 4000;

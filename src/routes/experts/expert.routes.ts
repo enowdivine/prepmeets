@@ -425,6 +425,32 @@ router.put("/update-password/:id", ExpertAuthMiddleware, user.updatePassword);
  */
 router.put("/new-password/:id", user.newPassword);
 
+// SOCIAL AUTHENTICATION ROUTES
+
+/**
+ * @swagger
+ * /api/v1/experts/social-auth:
+ *   post:
+ *      summary: Expert login and sign up route
+ *      tags: [Expert]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/Expert'
+ *      responses:
+ *          200:
+ *              description: expert created successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Expert'
+ *          500:
+ *              description: an error occured
+ */
+router.post("/social-auth", user.socialLogin);
+
 export default router;
 
 // {
