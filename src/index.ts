@@ -61,7 +61,7 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
-app.set("view engine", "ejs");
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
