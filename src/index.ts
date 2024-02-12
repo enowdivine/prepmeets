@@ -61,7 +61,7 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
-app.set("view engine", "ejs");
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -78,8 +78,7 @@ app.use(`/api/${process.env.API_VERSION}/conversations`, conversationRoutes);
 app.use(`/api/${process.env.API_VERSION}/subscriptions`, subscriptionRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  // res.send("Prepmeets Server");
-  res.render("index");
+  res.send("Prepmeets Server");
 });
 
 const port = process.env.PORT || 4000;

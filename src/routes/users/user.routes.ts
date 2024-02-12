@@ -375,11 +375,30 @@ router.put("/update-password/:id", UserAuthMiddleware, user.updatePassword);
  */
 router.put("/new-password/:id", user.newPassword);
 
-// FACEBOOK AUTHENTICATION ROUTES
-// router.get("/facebook-login", facebook.authenticate);
+// SOCIAL AUTHENTICATION ROUTES
 
-// router.get("/callback", facebook.callback);
-
-// router.get("/signout", facebook.logout);
+/**
+ * @swagger
+ * /api/v1/clients/social-auth:
+ *   post:
+ *      summary: Client login and signup route
+ *      tags: [User]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/User'
+ *      responses:
+ *          200:
+ *              description: user created successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/User'
+ *          500:
+ *              description: an error occured
+ */
+router.post("/social-auth", user.socialLogin);
 
 export default router;

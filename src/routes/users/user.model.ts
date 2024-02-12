@@ -82,6 +82,7 @@ export const UserMap = async (sequelize: Sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      // social login fields
       accountId: {
         type: DataTypes.STRING,
         defaultValue: "",

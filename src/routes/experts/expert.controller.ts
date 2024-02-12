@@ -511,6 +511,64 @@ class ExpertController {
       });
     }
   }
+
+  // SOCIAL AUTHENTICATION HANDLERS
+
+  async socialLogin(req: Request, res: Response) {
+    try {
+      ExpertMap(sequelizeDB);
+      const user = await Expert.findOne({
+        where: { accountId: req.body.accountId },
+      });
+      if (user) {
+        const token: string = jwt.sign(
+          {
+            id: user.id,
+            role: user.role,
+            email: user.email,
+            accountId: user.accountId,
+          },
+          process.env.JWT_SECRET as string
+        );
+        res.status(201).json({
+          message: "success",
+          token,
+        });
+      }
+      const userData = {
+        accountId: req.body.accountId,
+        provider: req.body.provider,
+        email: req.body.email,
+        emailConfirmed: true,
+      };
+      const newuser = await Expert.create(userData);
+      const token: string = jwt.sign(
+        {
+          id: newuser.id,
+          role: newuser.role,
+          email: newuser.email,
+          accountId: newuser.accountId,
+        },
+        process.env.JWT_SECRET as string
+      );
+      sendEmail({
+        to: newuser.email as string,
+        subject: `Welcome expert ${newuser?.firstname}`,
+        title: welcomeEmailTitle(newuser?.firstname as string),
+        message: welcomeEmail(newuser?.firstname as string),
+      });
+      res.status(201).json({
+        message: "success",
+        token,
+      });
+    } catch (error) {
+      console.error("user registration error", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
 }
 
 export default ExpertController;

@@ -163,6 +163,7 @@ export const ExpertMap = async (sequelize: Sequelize) => {
         defaultValue: 0,
       },
 
+      // social login fields
       accountId: {
         type: DataTypes.STRING,
         defaultValue: "",
