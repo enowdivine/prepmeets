@@ -1,12 +1,10 @@
 import { Request, Response } from "express";
-import Subscription, { SubscriptionMap } from "./subscription.model";
-import sequelizeDB from "../../config/db";
+const db = require("../../models/index");
 
 class MailController {
   async subscribe(req: Request, res: Response) {
     try {
-      SubscriptionMap(sequelizeDB);
-      const mail = await Subscription.findOne({
+      const mail = await db.Subscription.findOne({
         where: { email: req.body.email },
       });
       if (mail) {
@@ -17,13 +15,13 @@ class MailController {
       const subscriber = {
         email: req.body.email,
       };
-      await Subscription.create(subscriber)
+      await db.Subscription.create(subscriber)
         .then(() => {
           res.status(201).json({
             message: "success",
           });
         })
-        .catch((err) => {
+        .catch((err: any) => {
           res.status(500).json({
             message: "an error occured",
             error: err,
@@ -40,8 +38,7 @@ class MailController {
 
   async subsribers(req: Request, res: Response) {
     try {
-      SubscriptionMap(sequelizeDB);
-      const subsccribers = await Subscription.findAll();
+      const subsccribers = await db.Subscription.findAll();
       if (subsccribers) {
         return res.status(200).json(subsccribers);
       } else {
@@ -60,10 +57,9 @@ class MailController {
 
   async unsubscribe(req: Request, res: Response) {
     try {
-      SubscriptionMap(sequelizeDB);
-      await Subscription.destroy({
+      await db.Subscription.destroy({
         where: { email: req.body.email },
-      }).then((deletedRows) => {
+      }).then((deletedRows: any) => {
         if (deletedRows > 0) {
           res.status(200).json({
             message: "success",

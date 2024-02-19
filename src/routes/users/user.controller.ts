@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import User from "./user.model";
+const db = require("../../models/index");
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
@@ -27,7 +27,7 @@ import {
 class UserController {
   async register(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ where: { email: req.body.email } });
+      const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
         return res.status(409).json({
           message: "email already exist",
@@ -43,7 +43,7 @@ class UserController {
         location: req.body.location,
         password: hash,
       };
-      const newuser = await User.create(userData);
+      const newuser = await db.User.create(userData);
       const token: string = jwt.sign(
         {
           id: newuser.id,
@@ -79,7 +79,7 @@ class UserController {
         req.params.token,
         process.env.JWT_SECRET as string
       );
-      const user = await User.findOne({ where: { id: decodedToken.id } });
+      const user = await db.User.findOne({ where: { id: decodedToken.id } });
       if (user) {
         user.set({ emailConfirmed: true });
         await user
@@ -116,7 +116,7 @@ class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ where: { email: req.body.email } });
+      const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
         if (user.emailConfirmed === false) {
           return res.status(401).json({
@@ -168,7 +168,7 @@ class UserController {
 
   async update(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ where: { id: req.params.id } });
+      const user = await db.User.findOne({ where: { id: req.params.id } });
       if (user) {
         user.set({
           firstname: req.body.firstname,
@@ -180,7 +180,7 @@ class UserController {
         });
         await user
           .save()
-          .then((resUser) => {
+          .then((resUser: any) => {
             console.log(resUser);
             const token: string = jwt.sign(
               {
@@ -234,7 +234,7 @@ class UserController {
       });
 
       // Find and delete current image if it exist
-      const user = await User.findOne({ where: { id: req.params.id } });
+      const user = await db.User.findOne({ where: { id: req.params.id } });
       if (user) {
         if (user.avatar !== null) {
           const filePathToDelete = path.join(
@@ -283,7 +283,7 @@ class UserController {
 
   async updatePassword(req: Request, res: Response) {
     try {
-      let user = await User.findOne({ where: { id: req.params.id } });
+      let user = await db.User.findOne({ where: { id: req.params.id } });
       if (user) {
         const { currentPassword, newPassword } = req.body;
         bcrypt
@@ -337,7 +337,7 @@ class UserController {
 
   async user(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ where: { id: req.params.id } });
+      const user = await db.User.findOne({ where: { id: req.params.id } });
       if (user) {
         return res.status(200).json(user);
       } else {
@@ -356,7 +356,7 @@ class UserController {
 
   async users(req: Request, res: Response) {
     try {
-      const users = await User.findAll();
+      const users = await db.User.findAll();
       if (users) {
         return res.status(200).json(users);
       } else {
@@ -374,7 +374,7 @@ class UserController {
 
   async forgotPassword(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ where: { email: req.body.email } });
+      const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
         const resetToken: string = jwt.sign(
           {
@@ -413,7 +413,7 @@ class UserController {
 
   async newPassword(req: Request, res: Response) {
     try {
-      let user = await User.findOne({ where: { id: req.params.id } });
+      let user = await db.User.findOne({ where: { id: req.params.id } });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {
@@ -473,7 +473,7 @@ class UserController {
 
   async socialLogin(req: Request, res: Response) {
     try {
-      const user = await User.findOne({
+      const user = await db.User.findOne({
         where: { accountId: req.body.accountId },
       });
       if (user) {
@@ -497,7 +497,7 @@ class UserController {
         email: req.body.email,
         emailConfirmed: true,
       };
-      const newuser = await User.create(userData);
+      const newuser = await db.User.create(userData);
       const token: string = jwt.sign(
         {
           id: newuser.id,

@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
-import Rating, { RatingMap } from "./rating.model";
-import ExpertModel, { ExpertMap } from "../experts/expert.model";
-import sequelizeDB from "../../config/db";
+const db = require("../../models/index");
 
 class RatingController {
   async create(req: Request, res: Response) {
@@ -12,10 +10,9 @@ class RatingController {
         rating: req.body.rating,
         comment: req.body.comment,
       };
-      RatingMap(sequelizeDB);
-      await Rating.create(ratingData)
+      await db.Rating.create(ratingData)
         .then(async () => {
-          const expertRatings = await Rating.findAll({
+          const expertRatings = await db.Rating.findAll({
             where: { expertId: req.body.expertId },
           });
 
@@ -29,8 +26,7 @@ class RatingController {
               Math.round((count / expertRatings.length) * 10) / 10;
 
             // expert update
-            ExpertMap(sequelizeDB);
-            const expert = await ExpertModel.findOne({
+            const expert = await db.ExpertModel.findOne({
               where: { id: Number(req.body.expertId) },
             });
             expert?.set({ rating: newRate });
@@ -45,7 +41,7 @@ class RatingController {
             });
           }
         })
-        .catch((err) => {
+        .catch((err: any) => {
           res.status(500).json({
             message: "error rating expert",
             error: err,
@@ -62,8 +58,7 @@ class RatingController {
 
   async ratings(req: Request, res: Response) {
     try {
-      RatingMap(sequelizeDB);
-      const ratings = await Rating.findAll({
+      const ratings = await db.Rating.findAll({
         where: { expertId: req.params.id },
       });
       if (ratings) {
