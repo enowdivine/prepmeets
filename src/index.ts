@@ -83,21 +83,10 @@ app.get("/", (req: Request, res: Response) => {
 
 const port = process.env.PORT || 4000;
 
-// server.listen(port, async () => {
-//   console.log(`Server running on http://localhost:${port}`);
-//   try {
-//     await sequelizeDB.authenticate();
-//     console.log("Database connected 🔥 !!");
-//   } catch (error) {
-//     console.error("Unable to connect to the database !!!", error);
-//   }
-// });
-
-// vercel test connect
 server.listen(port, async () => {
   console.log(`Server running on http://localhost:${port}`);
   try {
-    await sequelizeDB.connect();
+    await sequelizeDB.authenticate();
     console.log("Database connected 🔥 !!");
   } catch (error) {
     console.error("Unable to connect to the database !!!", error);
