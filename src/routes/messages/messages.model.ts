@@ -12,6 +12,7 @@ export const MessageMap = async (sequelize: Sequelize) => {
   Message.init(
     {
       id: {
+        allowNull: false,
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -35,8 +36,8 @@ export const MessageMap = async (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      tableName: "messages", // explicitly set the table name
-      modelName: "Message", // explicitly set modelName
+      // tableName: "messages",
+      modelName: "Message",
     }
   );
   await Message.sync({ alter: true });

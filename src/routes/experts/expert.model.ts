@@ -175,11 +175,11 @@ export const ExpertMap = async (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      tableName: "experts", // explicitly set the table name
-      modelName: "Expert", // explicitly set modelName
+      tableName: "experts",
+      modelName: "Expert",
     }
   );
-  await Expert.sync({ alter: true });
+  await Expert.sync();
 };
 
 // pricing: {

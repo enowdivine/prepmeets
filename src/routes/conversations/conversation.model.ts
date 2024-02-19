@@ -20,8 +20,8 @@ export const ConversationMap = async (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      tableName: "conversations", // explicitly set the table name
-      modelName: "Conversation", // explicitly set modelName
+      // tableName: "conversations",
+      modelName: "Conversation",
     }
   );
   await Conversation.sync({ alter: true });

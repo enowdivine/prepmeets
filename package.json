@@ -7,7 +7,9 @@
     "start": "node build/index.js",
     "dev": "nodemon src/index.ts",
     "build": "tsc --project .",
-    "postinstall": "tsc"
+    "postinstall": "tsc",
+    "migrate": "npx sequelize-cli db:migrate",
+    "down": "npx sequelize-cli db:migrate:undo"
   },
   "keywords": [],
   "author": "",
@@ -51,8 +53,12 @@
     "@types/multer": "^1.4.11",
     "@types/multer-s3": "^3.0.3",
     "@types/nodemailer": "^6.4.14",
+    "@types/pg": "^8.11.0",
     "@types/sequelize": "^4.28.20",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.3.3"
+  },
+  "sequelize-cli": {
+    "config": "./src/config/config.js"
   }
 }

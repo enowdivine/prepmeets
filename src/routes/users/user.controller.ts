@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import User, { UserMap } from "./user.model";
-import sequelizeDB from "../../config/db";
+import User from "./user.model";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
@@ -28,7 +27,6 @@ import {
 class UserController {
   async register(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
         return res.status(409).json({
@@ -81,7 +79,6 @@ class UserController {
         req.params.token,
         process.env.JWT_SECRET as string
       );
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { id: decodedToken.id } });
       if (user) {
         user.set({ emailConfirmed: true });
@@ -119,7 +116,6 @@ class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
         if (user.emailConfirmed === false) {
@@ -172,7 +168,6 @@ class UserController {
 
   async update(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { id: req.params.id } });
       if (user) {
         user.set({
@@ -239,7 +234,6 @@ class UserController {
       });
 
       // Find and delete current image if it exist
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { id: req.params.id } });
       if (user) {
         if (user.avatar !== null) {
@@ -289,7 +283,6 @@ class UserController {
 
   async updatePassword(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       let user = await User.findOne({ where: { id: req.params.id } });
       if (user) {
         const { currentPassword, newPassword } = req.body;
@@ -344,7 +337,6 @@ class UserController {
 
   async user(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { id: req.params.id } });
       if (user) {
         return res.status(200).json(user);
@@ -364,7 +356,6 @@ class UserController {
 
   async users(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const users = await User.findAll();
       if (users) {
         return res.status(200).json(users);
@@ -383,7 +374,6 @@ class UserController {
 
   async forgotPassword(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const user = await User.findOne({ where: { email: req.body.email } });
       if (user) {
         const resetToken: string = jwt.sign(
@@ -423,7 +413,6 @@ class UserController {
 
   async newPassword(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       let user = await User.findOne({ where: { id: req.params.id } });
       if (user) {
         const { newPassword } = req.body;
@@ -484,7 +473,6 @@ class UserController {
 
   async socialLogin(req: Request, res: Response) {
     try {
-      UserMap(sequelizeDB);
       const user = await User.findOne({
         where: { accountId: req.body.accountId },
       });

@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import Expert, { ExpertMap } from "./expert.model";
+const db = require("../../models/index");
+
+// import { Expert } from "../../models/experts";
 import sequelizeDB from "../../config/db";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -28,7 +31,8 @@ import {
 class ExpertController {
   async register(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
+      // ExpertMap(sequelizeDB);
+
       const user = await Expert.findOne({ where: { email: req.body.email } });
       if (user) {
         return res.status(409).json({
@@ -394,8 +398,8 @@ class ExpertController {
 
   async users(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const users = await Expert.findAll();
+      // ExpertMap(sequelizeDB);
+      const users = await db.Expert.findAll();
       if (users) {
         return res.status(200).json(users);
       } else {
@@ -406,7 +410,7 @@ class ExpertController {
     } catch (error) {
       console.error("error fetching users", error);
       return res.status(500).json({
-        message: "error fetching users",
+        message: "error fetching experts",
         error,
       });
     }
@@ -455,7 +459,7 @@ class ExpertController {
   async newPassword(req: Request, res: Response) {
     try {
       ExpertMap(sequelizeDB);
-      let user = await Expert.findOne({ where: { id: req.params.id } });
+      let user = await db.Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {

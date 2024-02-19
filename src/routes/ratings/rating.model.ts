@@ -12,6 +12,7 @@ export const RatingMap = async (sequelize: Sequelize) => {
   Rating.init(
     {
       id: {
+        allowNull: false,
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -35,8 +36,8 @@ export const RatingMap = async (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      tableName: "ratings", // explicitly set the table name
-      modelName: "Rating", // explicitly set modelName
+      // tableName: "ratings",
+      modelName: "Rating",
     }
   );
   await Rating.sync({ alter: true });
