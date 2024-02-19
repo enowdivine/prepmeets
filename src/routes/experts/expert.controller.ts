@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import Expert, { ExpertMap } from "./expert.model";
-import sequelizeDB from "../../config/db";
+const db = require("../../models/index");
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
@@ -28,8 +27,9 @@ import {
 class ExpertController {
   async register(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { email: req.body.email } });
+      const user = await db.Expert.findOne({
+        where: { email: req.body.email },
+      });
       if (user) {
         return res.status(409).json({
           message: "email already exist",
@@ -45,8 +45,8 @@ class ExpertController {
         havecertifications: req.body.havecertifications,
         password: hash,
       };
-      await Expert.create(userData)
-        .then((newuser) => {
+      await db.Expert.create(userData)
+        .then((newuser: any) => {
           const token: string = jwt.sign(
             {
               id: newuser.id,
@@ -68,7 +68,7 @@ class ExpertController {
             token,
           });
         })
-        .catch((err) => {
+        .catch((err: any) => {
           res.status(400).json({
             message: "an error occured",
             err,
@@ -89,8 +89,7 @@ class ExpertController {
         req.params.token,
         process.env.JWT_SECRET as string
       );
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { id: decodedToken.id } });
+      const user = await db.Expert.findOne({ where: { id: decodedToken.id } });
       if (user) {
         user.set({ emailConfirmed: true });
         await user
@@ -127,8 +126,9 @@ class ExpertController {
 
   async login(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { email: req.body.email } });
+      const user = await db.Expert.findOne({
+        where: { email: req.body.email },
+      });
       if (user) {
         if (user.emailConfirmed === false) {
           return res.status(401).json({
@@ -180,8 +180,7 @@ class ExpertController {
 
   async update(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { id: req.params.id } });
+      const user = await db.Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         user.set({
           firstname: req.body.firstname,
@@ -216,7 +215,7 @@ class ExpertController {
         });
         await user
           .save()
-          .then((resUser) => {
+          .then((resUser: any) => {
             const token: string = jwt.sign(
               {
                 id: resUser?.id,
@@ -269,8 +268,7 @@ class ExpertController {
       });
 
       // Find and delete current image if it exist
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { id: req.params.id } });
+      const user = await db.Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         if (user?.avatar !== null) {
           const filePathToDelete = path.join(
@@ -319,8 +317,7 @@ class ExpertController {
 
   async updatePassword(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      let user = await Expert.findOne({ where: { id: req.params.id } });
+      let user = await db.Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         const { currentPassword, newPassword } = req.body;
         bcrypt
@@ -374,8 +371,7 @@ class ExpertController {
 
   async user(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { id: req.params.id } });
+      const user = await db.Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         return res.status(200).json(user);
       } else {
@@ -394,8 +390,8 @@ class ExpertController {
 
   async users(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const users = await Expert.findAll();
+      // ExpertMap(sequelizeDB);
+      const users = await db.Expert.findAll();
       if (users) {
         return res.status(200).json(users);
       } else {
@@ -406,7 +402,7 @@ class ExpertController {
     } catch (error) {
       console.error("error fetching users", error);
       return res.status(500).json({
-        message: "error fetching users",
+        message: "error fetching experts",
         error,
       });
     }
@@ -414,8 +410,9 @@ class ExpertController {
 
   async forgotPassword(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({ where: { email: req.body.email } });
+      const user = await db.Expert.findOne({
+        where: { email: req.body.email },
+      });
       if (user) {
         const resetToken: string = jwt.sign(
           {
@@ -454,8 +451,7 @@ class ExpertController {
 
   async newPassword(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      let user = await Expert.findOne({ where: { id: req.params.id } });
+      let user = await db.Expert.findOne({ where: { id: req.params.id } });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {
@@ -516,8 +512,7 @@ class ExpertController {
 
   async socialLogin(req: Request, res: Response) {
     try {
-      ExpertMap(sequelizeDB);
-      const user = await Expert.findOne({
+      const user = await db.Expert.findOne({
         where: { accountId: req.body.accountId },
       });
       if (user) {
@@ -541,7 +536,7 @@ class ExpertController {
         email: req.body.email,
         emailConfirmed: true,
       };
-      const newuser = await Expert.create(userData);
+      const newuser = await db.Expert.create(userData);
       const token: string = jwt.sign(
         {
           id: newuser.id,

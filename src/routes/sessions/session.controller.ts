@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import Session, { SessionMap } from "./session.model";
-import sequelizeDB from "../../config/db";
+const db = require("../../models/index");
 import _ from "lodash";
 
 class SessionController {
@@ -17,15 +16,14 @@ class SessionController {
         sessionStatus: req.body.sessionStatus,
         paymentStatus: req.body.paymentStatus,
       };
-      SessionMap(sequelizeDB);
-      Session.create(booking)
-        .then((booking) => {
+      db.Session.create(booking)
+        .then((booking: any) => {
           res.status(201).json({
             message: "success",
             booking,
           });
         })
-        .catch((err) => {
+        .catch((err: any) => {
           res.status(500).json({
             message: "an error occured",
             error: err,
@@ -42,8 +40,9 @@ class SessionController {
 
   async session(req: Request, res: Response) {
     try {
-      SessionMap(sequelizeDB);
-      const session = await Session.findOne({ where: { id: req.params.id } });
+      const session = await db.Session.findOne({
+        where: { id: req.params.id },
+      });
       if (session) {
         return res.status(200).json(session);
       } else {
@@ -62,8 +61,7 @@ class SessionController {
 
   async clientSessions(req: Request, res: Response) {
     try {
-      SessionMap(sequelizeDB);
-      const session = await Session.findAll({
+      const session = await db.Session.findAll({
         where: { clientId: req.params.id },
       });
       if (session) {
@@ -84,8 +82,7 @@ class SessionController {
 
   async expertSessions(req: Request, res: Response) {
     try {
-      SessionMap(sequelizeDB);
-      const session = await Session.findAll({
+      const session = await db.Session.findAll({
         where: { expertId: req.params.id },
       });
       if (session) {
@@ -106,8 +103,7 @@ class SessionController {
 
   async sessions(req: Request, res: Response) {
     try {
-      SessionMap(sequelizeDB);
-      const sessions = await Session.findAll();
+      const sessions = await db.Session.findAll();
       if (sessions) {
         return res.status(200).json(sessions);
       } else {
@@ -126,8 +122,9 @@ class SessionController {
 
   async updateStatus(req: Request, res: Response) {
     try {
-      SessionMap(sequelizeDB);
-      const session = await Session.findOne({ where: { id: req.params.id } });
+      const session = await db.Session.findOne({
+        where: { id: req.params.id },
+      });
       if (session) {
         console.log(session);
         session.sessionStatus = req.body.sessionStatus;

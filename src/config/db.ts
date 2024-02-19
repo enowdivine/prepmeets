@@ -1,3 +1,5 @@
+import "dotenv/config";
+import * as pg from "pg";
 import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize(
@@ -7,6 +9,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.POSTGRES_HOST,
     dialect: "postgres",
+    dialectModule: pg,
   }
 );
 

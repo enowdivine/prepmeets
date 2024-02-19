@@ -1,21 +1,5 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
 
-// interface UserAttributes {
-//   id: number;
-//   role: string;
-//   avatar: Record<string, any>;
-//   firstname: string;
-//   lastname: string;
-//   email: string;
-//   phone: number;
-//   whatINeed: string;
-//   location: string;
-//   password: string;
-//   emailConfirmed: boolean;
-//   accountId: string;
-//   provider: string;
-// }
-
 export default class User extends Model {
   public id?: number;
   public role?: string;

@@ -9,6 +9,7 @@ export const SubscriptionMap = async (sequelize: Sequelize) => {
   Subscription.init(
     {
       id: {
+        allowNull: false,
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -20,8 +21,8 @@ export const SubscriptionMap = async (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      tableName: "subscriptions", // explicitly set the table name
-      modelName: "Subscription", // explicitly set modelName
+      // tableName: "subscriptions",
+      modelName: "Subscription",
     }
   );
   await Subscription.sync({ alter: true });

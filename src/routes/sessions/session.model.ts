@@ -18,6 +18,7 @@ export const SessionMap = async (sequelize: Sequelize) => {
   Session.init(
     {
       id: {
+        allowNull: false,
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
@@ -65,8 +66,8 @@ export const SessionMap = async (sequelize: Sequelize) => {
     },
     {
       sequelize,
-      tableName: "sessions", // explicitly set the table name
-      modelName: "Session", // explicitly set modelName
+      // tableName: "sessions",
+      modelName: "Session",
     }
   );
   await Session.sync({ alter: true });

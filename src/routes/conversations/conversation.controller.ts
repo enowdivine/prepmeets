@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Op } from "@sequelize/core";
-import Conversation, { ConversationMap } from "./conversation.model";
-import sequelizeDB from "../../config/db";
+const db = require("../../models/index");
 
 class ConversationController {
   async createConversation(req: Request, res: Response) {
@@ -9,8 +8,7 @@ class ConversationController {
       const newConversation = {
         members: [req.body.senderId, req.body.receiverId],
       };
-      ConversationMap(sequelizeDB);
-      const savedConversation = await Conversation.create(newConversation);
+      const savedConversation = await db.Conversation.create(newConversation);
       return res.status(200).json(savedConversation);
     } catch (error) {
       return res.status(500).json({
@@ -22,8 +20,7 @@ class ConversationController {
 
   async getUserConversations(req: Request, res: Response) {
     try {
-      ConversationMap(sequelizeDB);
-      const conversations = await Conversation.findAll({
+      const conversations = await db.Conversation.findAll({
         where: {
           members: {
             [Op.contains]: [req.params.id],

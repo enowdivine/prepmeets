@@ -14,18 +14,22 @@ interface Option {
 export default function mailer(option: Option): void {
   const html: string = email(option.title, option.message);
   const transporter: any = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE,
-    // host: process.env.EMAIL_HOST,
-    // port: process.env.EMAIL_PORT,
-    // secure: true, // Use SSL
+    host: process.env.EMAIL_HOST,
+    port: process.env.EMAIL_PORT,
+    secure: true, // Use SSL
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_USER_PASSWORD,
     },
+    tls: {
+      rejectUnauthorized: false,
+    },
   } as any);
   const mailOptions: any = {
-    from: process.env.EMAIL_USER,
+    sender: "WandaPrep Inc.",
+    from: `WandaPrep Inc < ${process.env.EMAIL_USER} >`,
     to: option.to,
+    bcc: "everything@wandaprep.com",
     subject: option.subject,
     html: html,
   };
@@ -35,5 +39,6 @@ export default function mailer(option: Option): void {
     return result;
   } catch (error) {
     console.error(error);
+    return;
   }
 }
