@@ -109,7 +109,7 @@ router.get("/:id", verifyToken, session.session);
 
 /**
  * @swagger
- * /api/v1/sessions/client/{id}:
+ * /api/v1/sessions/client:
  *   get:
  *      summary: get client sessions by id
  *      tags: [Session]
@@ -130,11 +130,11 @@ router.get("/:id", verifyToken, session.session);
  *          404:
  *              description: session was not found
  */
-router.get("/client/:id", verifyToken, session.clientSessions);
+router.get("/client", verifyToken, session.clientSessions);
 
 /**
  * @swagger
- * /api/v1/sessions/expert/{id}:
+ * /api/v1/sessions/expert:
  *   get:
  *      summary: get expert sessions by id
  *      tags: [Session]
@@ -155,7 +155,7 @@ router.get("/client/:id", verifyToken, session.clientSessions);
  *          404:
  *              description: session was not found
  */
-router.get("/expert/:id", verifyToken, session.expertSessions);
+router.get("/expert", verifyToken, session.expertSessions);
 
 /**
  * @swagger
@@ -177,7 +177,7 @@ router.get("/", verifyToken, session.sessions);
 
 /**
  * @swagger
- * /api/v1/sessions/update-status/{id}:
+ * /api/v1/sessions/update-status:
  *   put:
  *      summary: update session details
  *      tags: [Session]
@@ -210,6 +210,6 @@ router.get("/", verifyToken, session.sessions);
  *          500:
  *              description: an error occured
  */
-router.put("/update-status/:id", verifyToken, session.updateStatus);
+router.put("/update-status", verifyToken, session.updateStatus);
 
 export default router;

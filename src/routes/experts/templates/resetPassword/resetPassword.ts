@@ -4,7 +4,7 @@ export function resetPasswordTitle() {
     `;
 }
 
-export function resetPassword(url: string) {
+export function resetPassword(code: number) {
   return `
   <div class="email-content">
   <img src="https://via.placeholder.com/90" alt="Welcome" />
@@ -13,13 +13,19 @@ export function resetPassword(url: string) {
     we recently received a request for a forgotten password. To change
     your prepmeet account password, please click on below link
   </p>
+  <div class="activation-code">
+    <span>${code}</span>
+  </div>
   <p>
     If you did not request this change, you do not need to do anything.
     Thanks,
   </p>
-  <div class="action_btn_div">
-    <a href="${url}" target="_blank" class="action_btn">Reset your password</a>
-  </div>
   </div>
   `;
 }
+
+//  <div class="action_btn_div">
+//    <a href="${url}" target="_blank" class="action_btn">
+//      Reset your password
+//    </a>
+//  </div>;

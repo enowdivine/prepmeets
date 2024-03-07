@@ -11,13 +11,16 @@ export function verificationCode(code: any) {
   <div class="activation-code">
     <span>${code}</span>
   </div>
-  <p>
-    You are ready to setup your account. Copy your activation code or
-    click the button below to activate your account.
+   <p>
+    You are ready to setup your account. 
+    Use the code above to activate your account.
   </p>
-  <div class="action_btn_div">
-    <a href="#" class="action_btn">Activate your account</a>
-  </div>
 </div>
     `;
 }
+
+// <div class="action_btn_div">
+//   <a href="#" class="action_btn">
+//     Activate your account
+//   </a>
+// </div>;

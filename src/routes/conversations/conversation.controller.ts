@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Op } from "@sequelize/core";
 const db = require("../../models/index");
+import { AuthenticatedRequest } from "../../middleware/auth/verifyToken";
 
 class ConversationController {
   async createConversation(req: Request, res: Response) {
@@ -18,12 +19,12 @@ class ConversationController {
     }
   }
 
-  async getUserConversations(req: Request, res: Response) {
+  async getUserConversations(req: AuthenticatedRequest, res: Response) {
     try {
       const conversations = await db.Conversation.findAll({
         where: {
           members: {
-            [Op.contains]: [req.params.id],
+            [Op.contains]: [req.id],
           },
         },
       });

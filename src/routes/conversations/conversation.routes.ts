@@ -56,7 +56,7 @@ router.post("/create", verifyToken, conversations.createConversation);
 
 /**
  * @swagger
- * /api/v1/conversations/{id}:
+ * /api/v1/conversations:
  *   get:
  *      summary: get user conversations
  *      tags: [Conversation]
@@ -78,6 +78,6 @@ router.post("/create", verifyToken, conversations.createConversation);
  *          404:
  *              description: conversations not found
  */
-router.get("/:id", verifyToken, conversations.getUserConversations);
+router.get("/", verifyToken, conversations.getUserConversations);
 
 export default router;

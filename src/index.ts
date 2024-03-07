@@ -24,6 +24,8 @@ const http = require("http");
 const path = require("path");
 export const appRoot = path.resolve(__dirname);
 
+const port = process.env.PORT || 4000;
+
 dotenv.config();
 
 // swagger options
@@ -37,7 +39,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:4000",
+        url: `http://localhost:${port}`,
       },
     ],
   },
@@ -80,8 +82,6 @@ app.use(`/api/${process.env.API_VERSION}/subscriptions`, subscriptionRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.send("Prepmeets Server");
 });
-
-const port = process.env.PORT || 4000;
 
 server.listen(port, async () => {
   console.log(`Server running on http://localhost:${port}`);

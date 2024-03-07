@@ -5,6 +5,7 @@ import fileUpload from "express-fileupload";
 import fileExtLimiter from "../../middleware/fileUpload/fileExtLimiter";
 import fileSizeLimiter from "../../middleware/fileUpload/fileSizeLimiter";
 import filesPayloadExists from "../../middleware/fileUpload/filePayloadExists";
+
 import UserAuthMiddleware from "../../middleware/auth/verifyUser";
 import verifyToken from "../../middleware/auth/verifyToken";
 
@@ -161,7 +162,7 @@ router.post("/forgot-password", user.forgotPassword);
 /**
  * @swagger
  * /api/v1/clients/verification/{token}:
- *   get:
+ *   post:
  *      summary: email verification
  *      tags: [User]
  *      parameters:
@@ -177,11 +178,32 @@ router.post("/forgot-password", user.forgotPassword);
  *          500:
  *              description: email verification failed
  */
-router.get("/verification/:token", user.verifyEmail);
+router.post("/verification/:token", user.verifyEmail);
 
 /**
  * @swagger
- * /api/v1/clients/{id}:
+ * /api/v1/clients/verifyotp/{token}:
+ *   post:
+ *      summary: forgot password verification
+ *      tags: [User]
+ *      parameters:
+ *          - in: path
+ *            name: token
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: token
+ *      responses:
+ *          200:
+ *              description: success
+ *          500:
+ *              description: email verification failed
+ */
+router.post("/verifyotp/:token", user.verifyOTP);
+
+/**
+ * @swagger
+ * /api/v1/clients/details:
  *   get:
  *      summary: get user by id
  *      tags: [User]
@@ -202,7 +224,7 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: user was not found
  */
-router.get("/:id", UserAuthMiddleware, user.user);
+router.get("/details", UserAuthMiddleware, user.user);
 
 /**
  * @swagger
@@ -224,7 +246,7 @@ router.get("/", verifyToken, user.users);
 
 /**
  * @swagger
- * /api/v1/clients/update-profile-image/{id}:
+ * /api/v1/clients/update-profile-image:
  *   put:
  *      summary: update profile image
  *      tags: [User]
@@ -256,7 +278,7 @@ router.get("/", verifyToken, user.users);
  *              description: an error occured
  */
 router.put(
-  "/upload-profile-image/:id",
+  "/upload-profile-image",
   UserAuthMiddleware,
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
@@ -267,7 +289,7 @@ router.put(
 
 /**
  * @swagger
- * /api/v1/clients/update-user/{id}:
+ * /api/v1/clients/update-user:
  *   put:
  *      summary: update user details
  *      tags: [User]
@@ -296,11 +318,11 @@ router.put(
  *          500:
  *              description: an error occured
  */
-router.put("/update-user/:id", UserAuthMiddleware, user.update);
+router.put("/update-user", UserAuthMiddleware, user.update);
 
 /**
  * @swagger
- * /api/v1/clients/update-password/{id}:
+ * /api/v1/clients/update-password:
  *   put:
  *      summary: update user password
  *      tags: [User]
@@ -338,11 +360,11 @@ router.put("/update-user/:id", UserAuthMiddleware, user.update);
  *          500:
  *              description: an error occured
  */
-router.put("/update-password/:id", UserAuthMiddleware, user.updatePassword);
+router.put("/update-password", UserAuthMiddleware, user.updatePassword);
 
 /**
  * @swagger
- * /api/v1/clients/new-password/{id}:
+ * /api/v1/clients/new-password:
  *   put:
  *      summary: create new user password
  *      tags: [User]
@@ -373,7 +395,7 @@ router.put("/update-password/:id", UserAuthMiddleware, user.updatePassword);
  *          500:
  *              description: an error occured
  */
-router.put("/new-password/:id", user.newPassword);
+router.put("/new-password", user.newPassword);
 
 // SOCIAL AUTHENTICATION ROUTES
 

@@ -5,12 +5,18 @@ import bcrypt from "bcrypt";
 import _ from "lodash";
 const fs = require("fs");
 const path = require("path");
+import OTPGenerator from "../../helpers/otpGenerator";
 import { appRoot } from "../..";
 import sendEmail from "../../services/email/sendEmail";
+import { AuthenticatedExpertRequest } from "../../middleware/auth/verifyExpert";
+// import {
+//   verifyEmail,
+//   verifyEmailTitle,
+// } from "./templates/verifyEmail/verifyEmail";
 import {
-  verifyEmail,
-  verifyEmailTitle,
-} from "./templates/verifyEmail/verifyEmail";
+  verificationCode,
+  verificationCodeTitle,
+} from "./templates/verificationCode/verificationCode";
 import {
   welcomeEmail,
   welcomeEmailTitle,
@@ -56,12 +62,15 @@ class ExpertController {
             },
             process.env.JWT_SECRET as string
           );
-          const url = `${process.env.SERVER_URL}/api/${process.env.API_VERSION}/experts/verification/${token}`;
+
+          const generator = new OTPGenerator();
+          const generatedOTP = generator.generateOTP(newuser.id);
+
           sendEmail({
             to: newuser.email as string,
-            subject: "Prepmeet Email Verification",
-            title: verifyEmailTitle(req.body.firstname),
-            message: verifyEmail(req.body.firstname, url),
+            subject: "Prepmeet Account Verification",
+            title: verificationCodeTitle(),
+            message: verificationCode(generatedOTP),
           });
           res.status(201).json({
             message: "success",
@@ -89,31 +98,43 @@ class ExpertController {
         req.params.token,
         process.env.JWT_SECRET as string
       );
-      const user = await db.Expert.findOne({ where: { id: decodedToken.id } });
-      if (user) {
-        user.set({ emailConfirmed: true });
-        await user
-          .save()
-          .then(() => {
-            sendEmail({
-              to: decodedToken.email as string,
-              subject: `Welcome expert ${user.firstname}`,
-              title: welcomeEmailTitle(user.firstname as string),
-              message: welcomeEmail(user.firstname as string),
+
+      const generator = new OTPGenerator();
+      const isValidOTP = generator.isValidOTP(decodedToken.id, req.body.otp);
+
+      if (isValidOTP) {
+        const user = await db.Expert.findOne({
+          where: { id: decodedToken.id },
+        });
+        if (user) {
+          user.set({ emailConfirmed: true });
+          await user
+            .save()
+            .then(() => {
+              sendEmail({
+                to: decodedToken.email as string,
+                subject: `Welcome expert ${user.firstname}`,
+                title: welcomeEmailTitle(user.firstname as string),
+                message: welcomeEmail(user.firstname as string),
+              });
+              return res.status(200).json({
+                message: "success",
+              });
+            })
+            .catch((err: any) => {
+              return res.status(500).json({
+                message: "email verification failed",
+                error: err,
+              });
             });
-            return res.status(200).json({
-              message: "success",
-            });
-          })
-          .catch((err: any) => {
-            return res.status(500).json({
-              message: "email verification failed",
-              error: err,
-            });
+        } else {
+          return res.status(404).json({
+            message: "user not found",
           });
+        }
       } else {
-        return res.status(404).json({
-          message: "user not found",
+        return res.status(400).json({
+          message: "OTP Expired",
         });
       }
     } catch (error) {
@@ -131,6 +152,15 @@ class ExpertController {
       });
       if (user) {
         if (user.emailConfirmed === false) {
+          const generator = new OTPGenerator();
+          const generatedOTP = generator.generateOTP(user.id);
+
+          sendEmail({
+            to: user.email as string,
+            subject: "Prepmeet Account Verification",
+            title: verificationCodeTitle(),
+            message: verificationCode(generatedOTP),
+          });
           return res.status(401).json({
             message: "verify email to login",
           });
@@ -178,9 +208,9 @@ class ExpertController {
     }
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: AuthenticatedExpertRequest, res: Response) {
     try {
-      const user = await db.Expert.findOne({ where: { id: req.params.id } });
+      const user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
         user.set({
           firstname: req.body.firstname,
@@ -249,7 +279,7 @@ class ExpertController {
     }
   }
 
-  async uploadProfileImage(req: Request, res: Response) {
+  async uploadProfileImage(req: AuthenticatedExpertRequest, res: Response) {
     try {
       const files: any = req.files;
 
@@ -268,7 +298,7 @@ class ExpertController {
       });
 
       // Find and delete current image if it exist
-      const user = await db.Expert.findOne({ where: { id: req.params.id } });
+      const user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
         if (user?.avatar !== null) {
           const filePathToDelete = path.join(
@@ -315,9 +345,9 @@ class ExpertController {
     }
   }
 
-  async updatePassword(req: Request, res: Response) {
+  async updatePassword(req: AuthenticatedExpertRequest, res: Response) {
     try {
-      let user = await db.Expert.findOne({ where: { id: req.params.id } });
+      let user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
         const { currentPassword, newPassword } = req.body;
         bcrypt
@@ -369,9 +399,9 @@ class ExpertController {
     }
   }
 
-  async user(req: Request, res: Response) {
+  async user(req: AuthenticatedExpertRequest, res: Response) {
     try {
-      const user = await db.Expert.findOne({ where: { id: req.params.id } });
+      const user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
         return res.status(200).json(user);
       } else {
@@ -426,15 +456,18 @@ class ExpertController {
             expiresIn: "1h",
           }
         );
-        const url = `${process.env.FRONTEND_URL}/api/${process.env.API_VERSION}/experts/new-password/${resetToken}`;
+        const generator = new OTPGenerator();
+        const generatedOTP = generator.generateOTP(user.id);
+
         sendEmail({
           to: user.email as string,
           subject: "Forgot password - Prepmeet",
           title: resetPasswordTitle(),
-          message: resetPassword(url),
+          message: resetPassword(generatedOTP),
         });
         return res.status(200).json({
           message: "success, check your inbox",
+          token: resetToken,
         });
       } else {
         return res.status(500).json({
@@ -449,9 +482,35 @@ class ExpertController {
     }
   }
 
-  async newPassword(req: Request, res: Response) {
+  async verifyOTP(req: Request, res: Response) {
     try {
-      let user = await db.Expert.findOne({ where: { id: req.params.id } });
+      const decodedToken: any = jwt.verify(
+        req.params.token,
+        process.env.JWT_SECRET as string
+      );
+      const generator = new OTPGenerator();
+      const isValidOTP = generator.isValidOTP(decodedToken.id, req.body.otp);
+
+      if (isValidOTP) {
+        return res.status(200).json({
+          message: "success",
+        });
+      } else {
+        return res.status(400).json({
+          message: "OTP Expired",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
+
+  async newPassword(req: AuthenticatedExpertRequest, res: Response) {
+    try {
+      let user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {

@@ -5,12 +5,18 @@ import bcrypt from "bcrypt";
 import _ from "lodash";
 const fs = require("fs");
 const path = require("path");
+import OTPGenerator from "../../helpers/otpGenerator";
 import { appRoot } from "../..";
 import sendEmail from "../../services/email/sendEmail";
+import { AuthenticatedClientRequest } from "../../middleware/auth/verifyUser";
+// import {
+//   verifyEmail,
+//   verifyEmailTitle,
+// } from "./templates/verifyEmail/verifyEmail";
 import {
-  verifyEmail,
-  verifyEmailTitle,
-} from "./templates/verifyEmail/verifyEmail";
+  verificationCode,
+  verificationCodeTitle,
+} from "./templates/verificationCode/verificationCode";
 import {
   accountApproved,
   accountApprovedTitle,
@@ -53,12 +59,21 @@ class UserController {
         },
         process.env.JWT_SECRET as string
       );
-      const url = `${process.env.SERVER_URL}/api/${process.env.API_VERSION}/clients/verification/${token}`;
+      // const url = `${process.env.SERVER_URL}/api/${process.env.API_VERSION}/clients/verification/${token}`;
+      // sendEmail({
+      //   to: newuser.email as string,
+      //   subject: "Prepmeet Email Verification",
+      //   title: verifyEmailTitle(req.body.firstname),
+      //   message: verifyEmail(req.body.firstname, url),
+      // });
+      const generator = new OTPGenerator();
+      const generatedOTP = generator.generateOTP(newuser.id);
+
       sendEmail({
         to: newuser.email as string,
-        subject: "Prepmeet Email Verification",
-        title: verifyEmailTitle(req.body.firstname),
-        message: verifyEmail(req.body.firstname, url),
+        subject: "Prepmeet Account Verification",
+        title: verificationCodeTitle(),
+        message: verificationCode(generatedOTP),
       });
       res.status(201).json({
         message: "success",
@@ -79,31 +94,40 @@ class UserController {
         req.params.token,
         process.env.JWT_SECRET as string
       );
-      const user = await db.User.findOne({ where: { id: decodedToken.id } });
-      if (user) {
-        user.set({ emailConfirmed: true });
-        await user
-          .save()
-          .then(() => {
-            sendEmail({
-              to: decodedToken.email as string,
-              subject: `Welcome ${user.firstname}`,
-              title: accountApprovedTitle(user.firstname as string),
-              message: accountApproved(),
+      const generator = new OTPGenerator();
+      const isValidOTP = generator.isValidOTP(decodedToken.id, req.body.otp);
+
+      if (isValidOTP) {
+        const user = await db.User.findOne({ where: { id: decodedToken.id } });
+        if (user) {
+          user.set({ emailConfirmed: true });
+          await user
+            .save()
+            .then(() => {
+              sendEmail({
+                to: decodedToken.email as string,
+                subject: `Welcome ${user.firstname}`,
+                title: accountApprovedTitle(user.firstname as string),
+                message: accountApproved(),
+              });
+              return res.status(200).json({
+                message: "success",
+              });
+            })
+            .catch((err: any) => {
+              return res.status(500).json({
+                message: "email verification failed",
+                error: err,
+              });
             });
-            return res.status(200).json({
-              message: "success",
-            });
-          })
-          .catch((err: any) => {
-            return res.status(500).json({
-              message: "email verification failed",
-              error: err,
-            });
+        } else {
+          return res.status(404).json({
+            message: "user not found",
           });
+        }
       } else {
-        return res.status(404).json({
-          message: "user not found",
+        return res.status(400).json({
+          message: "OTP Expired",
         });
       }
     } catch (error) {
@@ -119,8 +143,17 @@ class UserController {
       const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
         if (user.emailConfirmed === false) {
+          const generator = new OTPGenerator();
+          const generatedOTP = generator.generateOTP(user.id);
+
+          sendEmail({
+            to: user.email as string,
+            subject: "Prepmeet Account Verification",
+            title: verificationCodeTitle(),
+            message: verificationCode(generatedOTP),
+          });
           return res.status(401).json({
-            message: "verify email to login",
+            message: "Verify account to login",
           });
         }
         bcrypt.compare(
@@ -166,9 +199,9 @@ class UserController {
     }
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: AuthenticatedClientRequest, res: Response) {
     try {
-      const user = await db.User.findOne({ where: { id: req.params.id } });
+      const user = await db.User.findOne({ where: { id: req.id } });
       if (user) {
         user.set({
           firstname: req.body.firstname,
@@ -215,7 +248,7 @@ class UserController {
     }
   }
 
-  async uploadProfileImage(req: Request, res: Response) {
+  async uploadProfileImage(req: AuthenticatedClientRequest, res: Response) {
     try {
       const files: any = req.files;
 
@@ -234,7 +267,7 @@ class UserController {
       });
 
       // Find and delete current image if it exist
-      const user = await db.User.findOne({ where: { id: req.params.id } });
+      const user = await db.User.findOne({ where: { id: req.id } });
       if (user) {
         if (user.avatar !== null) {
           const filePathToDelete = path.join(
@@ -281,9 +314,9 @@ class UserController {
     }
   }
 
-  async updatePassword(req: Request, res: Response) {
+  async updatePassword(req: AuthenticatedClientRequest, res: Response) {
     try {
-      let user = await db.User.findOne({ where: { id: req.params.id } });
+      let user = await db.User.findOne({ where: { id: req.id } });
       if (user) {
         const { currentPassword, newPassword } = req.body;
         bcrypt
@@ -335,9 +368,9 @@ class UserController {
     }
   }
 
-  async user(req: Request, res: Response) {
+  async user(req: AuthenticatedClientRequest, res: Response) {
     try {
-      const user = await db.User.findOne({ where: { id: req.params.id } });
+      const user = await db.User.findOne({ where: { id: req.id } });
       if (user) {
         return res.status(200).json(user);
       } else {
@@ -388,15 +421,18 @@ class UserController {
             expiresIn: "1h",
           }
         );
-        const url = `${process.env.FRONTEND_URL}/api/${process.env.API_VERSION}/clients/new-password/${resetToken}`;
+        const generator = new OTPGenerator();
+        const generatedOTP = generator.generateOTP(user.id);
+
         sendEmail({
           to: user.email as string,
           subject: "Forgot password - Prepmeet",
           title: resetPasswordTitle(),
-          message: resetPassword(url),
+          message: resetPassword(generatedOTP),
         });
         return res.status(200).json({
           message: "success, check your inbox",
+          token: resetToken,
         });
       } else {
         return res.status(500).json({
@@ -411,9 +447,35 @@ class UserController {
     }
   }
 
-  async newPassword(req: Request, res: Response) {
+  async verifyOTP(req: Request, res: Response) {
     try {
-      let user = await db.User.findOne({ where: { id: req.params.id } });
+      const decodedToken: any = jwt.verify(
+        req.params.token,
+        process.env.JWT_SECRET as string
+      );
+      const generator = new OTPGenerator();
+      const isValidOTP = generator.isValidOTP(decodedToken.id, req.body.otp);
+
+      if (isValidOTP) {
+        return res.status(200).json({
+          message: "success",
+        });
+      } else {
+        return res.status(400).json({
+          message: "OTP Expired",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
+
+  async newPassword(req: AuthenticatedClientRequest, res: Response) {
+    try {
+      let user = await db.User.findOne({ where: { id: req.id } });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {

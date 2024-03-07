@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 const db = require("../../models/index");
 import _ from "lodash";
+import { AuthenticatedExpertRequest } from "../../middleware/auth/verifyExpert";
+import { AuthenticatedClientRequest } from "../../middleware/auth/verifyUser";
+import { AuthenticatedRequest } from "../../middleware/auth/verifyToken";
 
 class SessionController {
   async create(req: Request, res: Response) {
@@ -59,10 +62,10 @@ class SessionController {
     }
   }
 
-  async clientSessions(req: Request, res: Response) {
+  async clientSessions(req: AuthenticatedClientRequest, res: Response) {
     try {
       const session = await db.Session.findAll({
-        where: { clientId: req.params.id },
+        where: { clientId: req.id },
       });
       if (session) {
         return res.status(200).json(session);
@@ -80,10 +83,10 @@ class SessionController {
     }
   }
 
-  async expertSessions(req: Request, res: Response) {
+  async expertSessions(req: AuthenticatedExpertRequest, res: Response) {
     try {
       const session = await db.Session.findAll({
-        where: { expertId: req.params.id },
+        where: { expertId: req.id },
       });
       if (session) {
         return res.status(200).json(session);
@@ -120,13 +123,12 @@ class SessionController {
     }
   }
 
-  async updateStatus(req: Request, res: Response) {
+  async updateStatus(req: AuthenticatedRequest, res: Response) {
     try {
       const session = await db.Session.findOne({
-        where: { id: req.params.id },
+        where: { id: req.id },
       });
       if (session) {
-        console.log(session);
         session.sessionStatus = req.body.sessionStatus;
         await session.save().then(async () => {
           return res.status(200).json({
