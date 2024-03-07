@@ -211,7 +211,7 @@ router.post("/forgot-password", user.forgotPassword);
 /**
  * @swagger
  * /api/v1/experts/verification/{token}:
- *   get:
+ *   post:
  *      summary: email verification
  *      tags: [Expert]
  *      parameters:
@@ -227,11 +227,32 @@ router.post("/forgot-password", user.forgotPassword);
  *          500:
  *              description: email verification failed
  */
-router.get("/verification/:token", user.verifyEmail);
+router.post("/verification/:token", user.verifyEmail);
 
 /**
  * @swagger
- * /api/v1/experts/{id}:
+ * /api/v1/experts/verifyotp/{token}:
+ *   post:
+ *      summary: forgot password verification
+ *      tags: [Expert]
+ *      parameters:
+ *          - in: path
+ *            name: token
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: token
+ *      responses:
+ *          200:
+ *              description: success
+ *          500:
+ *              description: email verification failed
+ */
+router.post("/verifyotp/:token", user.verifyOTP);
+
+/**
+ * @swagger
+ * /api/v1/experts/details:
  *   get:
  *      summary: get expert by id
  *      tags: [Expert]
@@ -252,7 +273,7 @@ router.get("/verification/:token", user.verifyEmail);
  *          404:
  *              description: expert was not found
  */
-router.get("/:id", verifyToken, user.user);
+router.get("/details", verifyToken, user.user);
 
 /**
  * @swagger
@@ -274,7 +295,7 @@ router.get("/", user.users);
 
 /**
  * @swagger
- * /api/v1/experts/update-profile-image/{id}:
+ * /api/v1/experts/update-profile-image:
  *   put:
  *      summary: update profile image
  *      tags: [Expert]
@@ -306,7 +327,7 @@ router.get("/", user.users);
  *              description: an error occured
  */
 router.put(
-  "/upload-profile-image/:id",
+  "/upload-profile-image",
   ExpertAuthMiddleware,
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
@@ -317,7 +338,7 @@ router.put(
 
 /**
  * @swagger
- * /api/v1/experts/update-expert/{id}:
+ * /api/v1/experts/update-expert:
  *   put:
  *      summary: update expert details
  *      tags: [Expert]
@@ -346,11 +367,11 @@ router.put(
  *          500:
  *              description: an error occured
  */
-router.put("/update-expert/:id", ExpertAuthMiddleware, user.update);
+router.put("/update-expert", ExpertAuthMiddleware, user.update);
 
 /**
  * @swagger
- * /api/v1/experts/update-password/{id}:
+ * /api/v1/experts/update-password:
  *   put:
  *      summary: update expert password
  *      tags: [Expert]
@@ -388,11 +409,11 @@ router.put("/update-expert/:id", ExpertAuthMiddleware, user.update);
  *          500:
  *              description: an error occured
  */
-router.put("/update-password/:id", ExpertAuthMiddleware, user.updatePassword);
+router.put("/update-password", ExpertAuthMiddleware, user.updatePassword);
 
 /**
  * @swagger
- * /api/v1/experts/new-password/{id}:
+ * /api/v1/experts/new-password:
  *   put:
  *      summary: create new expert password
  *      tags: [Expert]
@@ -423,7 +444,7 @@ router.put("/update-password/:id", ExpertAuthMiddleware, user.updatePassword);
  *          500:
  *              description: an error occured
  */
-router.put("/new-password/:id", user.newPassword);
+router.put("/new-password", user.newPassword);
 
 // SOCIAL AUTHENTICATION ROUTES
 

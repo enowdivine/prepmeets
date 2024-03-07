@@ -3,6 +3,10 @@ import dotenv from "dotenv";
 import { Response, Request, NextFunction } from "express";
 dotenv.config();
 
+export interface AuthenticatedClientRequest extends Request {
+  id?: string; // Define the userId property
+}
+
 export default function (req: Request, res: Response, next: NextFunction) {
   if (!req.headers["authorization"]) {
     return res.status(403).send("Unauthorized Request !!");
@@ -20,6 +24,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
           message: "Invalid Token",
         });
       if (payload.role === "client") {
+        (req as AuthenticatedClientRequest).id = payload.id;
         next();
       } else {
         return res.json({

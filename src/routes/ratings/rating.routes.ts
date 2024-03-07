@@ -64,7 +64,7 @@ router.post("/create", verifyToken, rating.create);
 
 /**
  * @swagger
- * /api/v1/ratings/expert/{id}:
+ * /api/v1/ratings/expert:
  *   get:
  *      summary: get expert reviews
  *      tags: [Rating]
@@ -86,6 +86,6 @@ router.post("/create", verifyToken, rating.create);
  *          404:
  *              description: rating not found
  */
-router.get("/expert/:id", verifyToken, rating.ratings);
+router.get("/expert", verifyToken, rating.ratings);
 
 export default router;

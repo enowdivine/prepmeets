@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 const db = require("../../models/index");
+import { AuthenticatedRequest } from "../../middleware/auth/verifyToken";
 
 class MessagesController {
   async newMessage(req: Request, res: Response) {
@@ -20,10 +21,10 @@ class MessagesController {
     }
   }
 
-  async getUserMessages(req: Request, res: Response) {
+  async getUserMessages(req: AuthenticatedRequest, res: Response) {
     try {
       const messages = await db.Messages.findAll({
-        where: { conversationId: req.params.id },
+        where: { conversationId: req.id },
       });
       res.status(200).json(messages);
     } catch (error) {
