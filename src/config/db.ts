@@ -13,9 +13,15 @@ import { Sequelize } from "sequelize";
 //   }
 // );
 
-const sequelize = new Sequelize({
+const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
   dialect: "postgres",
-  storage: process.env.DATABASE_URL,
+  protocol: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // <<<<<< This line is required for Heroku PostgreSQL
+    },
+  },
 });
 
 export default sequelize;
