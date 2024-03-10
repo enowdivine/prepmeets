@@ -60,5 +60,8 @@
   },
   "sequelize-cli": {
     "config": "./src/config/config.js"
+  },
+  "engines": {
+    "node": "16.20.0"
   }
 }
