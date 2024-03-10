@@ -24,8 +24,6 @@ const http = require("http");
 const path = require("path");
 export const appRoot = path.resolve(__dirname);
 
-// console.log(path.join(appRoot, "/hello"));
-
 const port = process.env.PORT || 4000;
 
 dotenv.config();
