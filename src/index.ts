@@ -79,7 +79,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "uploads/client/profileImages"))); // Serve static files (images)
 app.use(express.static(path.join(__dirname, "uploads/expert/profileImages"))); // Serve static files (images)
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
-// app.use(`/api/${process.env.API_VERSION}/clients`, userRoutes);
+app.use(`/api/${process.env.API_VERSION}/clients`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/experts`, experRoutes);
 app.use(`/api/${process.env.API_VERSION}/sessions`, sessionRoutes);
 app.use(`/api/${process.env.API_VERSION}/ratings`, ratingRoutes);
