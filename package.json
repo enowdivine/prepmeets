@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node build/index.js",
     "dev": "nodemon src/index.ts",
-   "build": "tsc --project . && cp -r src build",
+   "build": "tsc --project . && cp -r src/uploads build/uploads && cp -r src/migrations build/migrations && cp -r src/models build/models",
     "postinstall": "tsc",
     "migrate": "npx sequelize-cli db:migrate",
     "down": "npx sequelize-cli db:migrate:undo"
