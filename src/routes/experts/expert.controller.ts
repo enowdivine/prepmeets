@@ -66,12 +66,12 @@ class ExpertController {
           const generator = new OTPGenerator();
           const generatedOTP = generator.generateOTP(newuser.id);
 
-          sendEmail({
-            to: newuser.email as string,
-            subject: "Prepmeet Account Verification",
-            title: verificationCodeTitle(),
-            message: verificationCode(generatedOTP),
-          });
+          // sendEmail({
+          //   to: newuser.email as string,
+          //   subject: "Prepmeet Account Verification",
+          //   title: verificationCodeTitle(),
+          //   message: verificationCode(generatedOTP),
+          // });
           res.status(201).json({
             message: "success",
             token,
@@ -152,20 +152,20 @@ class ExpertController {
         where: { email: req.body.email },
       });
       if (user) {
-        if (user.emailConfirmed === false) {
-          const generator = new OTPGenerator();
-          const generatedOTP = generator.generateOTP(user.id);
+        // if (user.emailConfirmed === false) {
+        //   const generator = new OTPGenerator();
+        //   const generatedOTP = generator.generateOTP(user.id);
 
-          sendEmail({
-            to: user.email as string,
-            subject: "Prepmeet Account Verification",
-            title: verificationCodeTitle(),
-            message: verificationCode(generatedOTP),
-          });
-          return res.status(401).json({
-            message: "verify email to login",
-          });
-        }
+        //   sendEmail({
+        //     to: user.email as string,
+        //     subject: "Prepmeet Account Verification",
+        //     title: verificationCodeTitle(),
+        //     message: verificationCode(generatedOTP),
+        //   });
+        //   return res.status(401).json({
+        //     message: "verify email to login",
+        //   });
+        // }
         bcrypt.compare(
           req.body.password,
           user.password!,

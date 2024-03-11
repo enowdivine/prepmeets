@@ -13,10 +13,10 @@ import { AuthenticatedClientRequest } from "../../middleware/auth/verifyUser";
 //   verifyEmail,
 //   verifyEmailTitle,
 // } from "./templates/verifyEmail/verifyEmail";
-import {
-  verificationCode,
-  verificationCodeTitle,
-} from "./templates/verificationCode/verificationCode";
+// import {
+//   verificationCode,
+//   verificationCodeTitle,
+// } from "./templates/verificationCode/verificationCode";
 import {
   accountApproved,
   accountApprovedTitle,
@@ -69,12 +69,12 @@ class UserController {
       const generator = new OTPGenerator();
       const generatedOTP = generator.generateOTP(newuser.id);
 
-      sendEmail({
-        to: newuser.email as string,
-        subject: "Prepmeet Account Verification",
-        title: verificationCodeTitle(),
-        message: verificationCode(generatedOTP),
-      });
+      // sendEmail({
+      //   to: newuser.email as string,
+      //   subject: "Prepmeet Account Verification",
+      //   title: verificationCodeTitle(),
+      //   message: verificationCode(generatedOTP),
+      // });
       res.status(201).json({
         message: "success",
         token,
@@ -143,20 +143,20 @@ class UserController {
     try {
       const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
-        if (user.emailConfirmed === false) {
-          const generator = new OTPGenerator();
-          const generatedOTP = generator.generateOTP(user.id);
+        // if (user.emailConfirmed === false) {
+        //   const generator = new OTPGenerator();
+        //   const generatedOTP = generator.generateOTP(user.id);
 
-          sendEmail({
-            to: user.email as string,
-            subject: "Prepmeet Account Verification",
-            title: verificationCodeTitle(),
-            message: verificationCode(generatedOTP),
-          });
-          return res.status(401).json({
-            message: "Verify account to login",
-          });
-        }
+        //   sendEmail({
+        //     to: user.email as string,
+        //     subject: "Prepmeet Account Verification",
+        //     title: verificationCodeTitle(),
+        //     message: verificationCode(generatedOTP),
+        //   });
+        //   return res.status(401).json({
+        //     message: "Verify account to login",
+        //   });
+        // }
         bcrypt.compare(
           req.body.password,
           user.password!,
