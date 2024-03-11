@@ -11,6 +11,7 @@ module.exports = {
     host: url.hostname,
     port: url.port,
     dialect: 'postgres',
+    dialectModule: pg,
     dialectOptions: {
       ssl: {
         require: true,
@@ -25,6 +26,7 @@ module.exports = {
     host: url.hostname,
     port: url.port,
     dialect: 'postgres',
+    dialectModule: pg,
     dialectOptions: {
       ssl: {
         require: true,
@@ -39,6 +41,7 @@ module.exports = {
     host: url.hostname,
     port: url.port,
     dialect: 'postgres',
+    dialectModule: pg,
     dialectOptions: {
       ssl: {
         require: true,
