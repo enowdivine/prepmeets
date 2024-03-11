@@ -92,7 +92,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 server.listen(port, async () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on ${process.env.SERVER_URL}:${port}`);
   try {
     await sequelizeDB.authenticate();
     console.log("Database connected 🔥 !!");
