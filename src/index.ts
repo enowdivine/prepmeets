@@ -39,7 +39,7 @@ const options = {
     },
     servers: [
       {
-        url: `http://localhost:${port}`,
+        url: `${process.env.SERVER_URL}:${port}`,
       },
     ],
   },
