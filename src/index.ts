@@ -69,8 +69,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(
-  "/uploads/client/profileImages/",
-  express.static(__dirname + "/uploads/client/profileImages/")
+  "/uploads/client/profileImage/",
+  express.static(__dirname + "/uploads/client/profileImage/")
 );
 app.use(
   "/uploads/expert/profileImage/",

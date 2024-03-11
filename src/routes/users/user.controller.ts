@@ -140,6 +140,7 @@ class UserController {
 
   async login(req: Request, res: Response) {
     try {
+      console.log(req.body, req.params);
       const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
         if (user.emailConfirmed === false) {
@@ -252,7 +253,7 @@ class UserController {
       Object.keys(files).forEach((key) => {
         const filepath = path.join(
           appRoot,
-          "uploads/client/profileImages",
+          "uploads/client/profileImage",
           files[key].name
         );
         files[key].mv(filepath, (err: any) => {
@@ -269,7 +270,7 @@ class UserController {
         if (user.avatar !== null) {
           const filePathToDelete = path.join(
             __dirname,
-            "uploads/client/profileImages",
+            "uploads/client/profileImage",
             user.avatar
           );
           // Use fs.unlink to delete the file
