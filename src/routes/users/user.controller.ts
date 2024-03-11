@@ -78,7 +78,19 @@ class UserController {
       res.status(201).json({
         message: "success",
         token,
-        user: newuser,
+        user: {
+          id: newuser.id,
+          role: newuser.role,
+          avatar: newuser.avatar,
+          firstname: newuser.firstname,
+          lastname: newuser.lastname,
+          email: newuser.email,
+          phone: newuser.phone,
+          whatINeed: newuser.whatINeed,
+          location: newuser.location,
+          accountId: newuser.accountId,
+          provider: newuser.provider,
+        },
       });
     } catch (error) {
       console.error("user registration error", error);
@@ -179,7 +191,19 @@ class UserController {
               return res.status(200).json({
                 message: "success",
                 token: token,
-                user,
+                user: {
+                  id: user.id,
+                  role: user.role,
+                  avatar: user.avatar,
+                  firstname: user.firstname,
+                  lastname: user.lastname,
+                  email: user.email,
+                  phone: user.phone,
+                  whatINeed: user.whatINeed,
+                  location: user.location,
+                  accountId: user.accountId,
+                  provider: user.provider,
+                },
               });
             }
           }
