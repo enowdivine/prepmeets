@@ -140,7 +140,6 @@ class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      console.log(req.body, req.params);
       const user = await db.User.findOne({ where: { email: req.body.email } });
       if (user) {
         if (user.emailConfirmed === false) {
