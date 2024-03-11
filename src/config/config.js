@@ -2,39 +2,48 @@ const dotenv = require("dotenv")
 const pg = require("pg")
 dotenv.config();
 
-// Heroku Connection
+const url = require('url').parse(process.env.DATABASE_URL);
 module.exports = {
   development: {
-    client: "pg",
-    connection: process.env.DATABASE_URL,
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      directory: "../migrations"
+    database: url.pathname.split('/')[1],
+    username: url.auth.split(':')[0],
+    password: url.auth.split(':')[1],
+    host: url.hostname,
+    port: url.port,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
     }
   },
   test: {
-    client: "pg",
-    connection: process.env.DATABASE_URL,
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      directory: "../migrations"
+    database: url.pathname.split('/')[1],
+    username: url.auth.split(':')[0],
+    password: url.auth.split(':')[1],
+    host: url.hostname,
+    port: url.port,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
     }
   },
   production: {
-    client: "pg",
-    connection: process.env.DATABASE_URL,
-    pool: {
-      min: 2,
-      max: 10
-    },
-    migrations: {
-      directory: "../migrations"
+    database: url.pathname.split('/')[1],
+    username: url.auth.split(':')[0],
+    password: url.auth.split(':')[1],
+    host: url.hostname,
+    port: url.port,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
     }
   },
 };
