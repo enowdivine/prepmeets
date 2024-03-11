@@ -5,8 +5,6 @@ dotenv.config();
 // Heroku Connection
 module.exports = {
   development: {
-    dialect: "postgres",
-    dialectModule: pg,
     client: "pg",
     connection: process.env.DATABASE_URL,
     pool: {
@@ -18,8 +16,6 @@ module.exports = {
     }
   },
   test: {
-    dialect: "postgres",
-    dialectModule: pg,
     client: "pg",
     connection: process.env.DATABASE_URL,
     pool: {
@@ -31,8 +27,6 @@ module.exports = {
     }
   },
   production: {
-    dialect: "postgres",
-    dialectModule: pg,
     client: "pg",
     connection: process.env.DATABASE_URL,
     pool: {
