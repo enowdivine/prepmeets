@@ -7,7 +7,6 @@ import fileSizeLimiter from "../../middleware/fileUpload/fileSizeLimiter";
 import filesPayloadExists from "../../middleware/fileUpload/filePayloadExists";
 
 import UserAuthMiddleware from "../../middleware/auth/verifyUser";
-// import verifyToken from "../../middleware/auth/verifyToken";
 
 const router: Router = express.Router();
 const user = new UserCtl();
