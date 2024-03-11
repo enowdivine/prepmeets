@@ -75,6 +75,7 @@ class ExpertController {
           res.status(201).json({
             message: "success",
             token,
+            user: newuser,
           });
         })
         .catch((err: any) => {
@@ -187,6 +188,7 @@ class ExpertController {
               return res.status(200).json({
                 message: "success",
                 token: token,
+                user,
               });
             }
             res.status(401).json({

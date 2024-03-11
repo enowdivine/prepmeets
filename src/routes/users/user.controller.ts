@@ -78,6 +78,7 @@ class UserController {
       res.status(201).json({
         message: "success",
         token,
+        user: newuser,
       });
     } catch (error) {
       console.error("user registration error", error);
@@ -178,6 +179,7 @@ class UserController {
               return res.status(200).json({
                 message: "success",
                 token: token,
+                user,
               });
             }
           }
