@@ -39,7 +39,7 @@ const options = {
     },
     servers: [
       {
-        url: `${process.env.SERVER_URL}:${port}`,
+        url: `${process.env.SERVER_URL}`,
       },
     ],
   },
