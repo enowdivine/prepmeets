@@ -162,7 +162,7 @@ class UserController {
           (err: any, result: any) => {
             if (err) {
               return res.status(401).json({
-                message: "authentication failed",
+                message: "incorrect password",
               });
             }
             if (result) {
@@ -180,14 +180,11 @@ class UserController {
                 token: token,
               });
             }
-            res.status(401).json({
-              message: "authentication failed",
-            });
           }
         );
       } else {
         return res.status(401).json({
-          message: "authentication failed",
+          message: "user not found",
         });
       }
     } catch (error) {
