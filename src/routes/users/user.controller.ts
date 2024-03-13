@@ -210,7 +210,7 @@ class UserController {
         );
       } else {
         return res.status(401).json({
-          message: "user not found",
+          message: "email not found",
         });
       }
     } catch (error) {
@@ -237,7 +237,6 @@ class UserController {
         await user
           .save()
           .then((resUser: any) => {
-            console.log(resUser);
             const token: string = jwt.sign(
               {
                 id: resUser?.id,
@@ -254,7 +253,7 @@ class UserController {
           })
           .catch((err: any) => {
             return res.status(500).json({
-              message: "email verification failed",
+              message: "user update error",
               error: err,
             });
           });
@@ -382,6 +381,10 @@ class UserController {
               error: err,
             });
           });
+      } else {
+        return res.status(404).json({
+          message: "user not found",
+        });
       }
     } catch (error) {
       return res.status(500).json({

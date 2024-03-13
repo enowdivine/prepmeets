@@ -254,7 +254,7 @@ class ExpertController {
         );
       } else {
         return res.status(401).json({
-          message: "authentication failed",
+          message: "email not found",
         });
       }
     } catch (error) {
@@ -320,7 +320,7 @@ class ExpertController {
           })
           .catch((err: any) => {
             return res.status(500).json({
-              message: "email verification failed",
+              message: "user update error",
               error: err,
             });
           });
