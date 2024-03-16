@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 const db = require("../../models/index");
-import { AuthenticatedExpertRequest } from "../../middleware/auth/verifyExpert";
 
 class RatingController {
   async create(req: Request, res: Response) {
@@ -57,10 +56,10 @@ class RatingController {
     }
   }
 
-  async ratings(req: AuthenticatedExpertRequest, res: Response) {
+  async ratings(req: Request, res: Response) {
     try {
       const ratings = await db.Rating.findAll({
-        where: { expertId: req.id },
+        where: { expertId: req.params.id },
       });
       if (ratings) {
         return res.status(200).json(ratings);
