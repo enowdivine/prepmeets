@@ -38,9 +38,26 @@ class MailController {
 
   async subsribers(req: Request, res: Response) {
     try {
-      const subsccribers = await db.Subscription.findAll();
-      if (subsccribers) {
-        return res.status(200).json(subsccribers);
+      let { page, limit } = req.query as any;
+
+      page = page ? parseInt(page, 10) : 1;
+      limit = limit ? parseInt(limit, 10) : 10;
+
+      const offset = (page - 1) * limit;
+
+      const subscribers = await db.Subscription.findAndCountAll({
+        limit: limit,
+        offset: offset,
+      });
+
+      if (subscribers.rows.length > 0) {
+        const totalPages = Math.ceil(subscribers.count / limit);
+
+        return res.status(200).json({
+          subscribers: subscribers.rows,
+          totalPages: totalPages,
+          currentPage: page,
+        });
       } else {
         return res.status(404).json({
           message: "no subscriber found",

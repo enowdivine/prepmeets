@@ -51,7 +51,7 @@ router.post("/subscribe", mail.subscribe);
 
 /**
  * @swagger
- * /api/v1/subscriptions/:
+ * /api/v1/subscriptions?page=1&limit=10:
  *   get:
  *      summary: get all emails
  *      tags: [Subscription]

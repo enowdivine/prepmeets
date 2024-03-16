@@ -227,7 +227,7 @@ router.get("/details", UserAuthMiddleware, user.user);
 
 /**
  * @swagger
- * /api/v1/clients/:
+ * /api/v1/clients?page=1&limit=10:
  *   get:
  *      summary: get all users
  *      tags: [User]

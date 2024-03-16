@@ -277,7 +277,7 @@ router.get("/details", verifyToken, user.user);
 
 /**
  * @swagger
- * /api/v1/experts/:
+ * /api/v1/experts?page=1&limit=10:
  *   get:
  *      summary: get all experts
  *      tags: [Expert]

@@ -58,20 +58,36 @@ class RatingController {
 
   async ratings(req: Request, res: Response) {
     try {
-      const ratings = await db.Rating.findAll({
+      let { page, limit } = req.query as any;
+
+      page = page ? parseInt(page, 10) : 1;
+      limit = limit ? parseInt(limit, 10) : 10;
+
+      const offset = (page - 1) * limit;
+
+      const ratings = await db.Rating.findAndCountAll({
         where: { expertId: req.params.id },
+        limit: limit,
+        offset: offset,
       });
-      if (ratings) {
-        return res.status(200).json(ratings);
+
+      if (ratings.rows.length > 0) {
+        const totalPages = Math.ceil(ratings.count / limit);
+
+        return res.status(200).json({
+          ratings: ratings.rows,
+          totalPages: totalPages,
+          currentPage: page,
+        });
       } else {
         return res.status(404).json({
-          message: "no ratings found",
+          message: "No ratings found",
         });
       }
     } catch (error) {
-      console.error("error fetching ratings", error);
+      console.error("Error fetching ratings", error);
       return res.status(500).json({
-        message: "an error occured",
+        message: "An error occurred",
         error,
       });
     }

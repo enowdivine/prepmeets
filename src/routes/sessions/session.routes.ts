@@ -109,7 +109,7 @@ router.get("/:id", verifyToken, session.session);
 
 /**
  * @swagger
- * /api/v1/sessions/client:
+ * /api/v1/sessions/client?page=1&limit=10:
  *   get:
  *      summary: get client sessions by id
  *      tags: [Session]
@@ -134,7 +134,7 @@ router.get("/client", verifyToken, session.clientSessions);
 
 /**
  * @swagger
- * /api/v1/sessions/expert:
+ * /api/v1/sessions/expert?page=1&limit=10:
  *   get:
  *      summary: get expert sessions by id
  *      tags: [Session]
@@ -159,7 +159,7 @@ router.get("/expert", verifyToken, session.expertSessions);
 
 /**
  * @swagger
- * /api/v1/sessions/:
+ * /api/v1/sessions?page=1&limit=10:
  *   get:
  *      summary: get all sessions
  *      tags: [Session]

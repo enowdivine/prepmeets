@@ -64,11 +64,27 @@ class SessionController {
 
   async clientSessions(req: AuthenticatedClientRequest, res: Response) {
     try {
-      const session = await db.Session.findAll({
+      let { page, limit } = req.query as any;
+
+      page = page ? parseInt(page, 10) : 1;
+      limit = limit ? parseInt(limit, 10) : 10;
+
+      const offset = (page - 1) * limit;
+
+      const sessions = await db.Session.findAndCountAll({
         where: { clientId: req.id },
+        limit: limit,
+        offset: offset,
       });
-      if (session) {
-        return res.status(200).json(session);
+
+      if (sessions.rows.length > 0) {
+        const totalPages = Math.ceil(sessions.count / limit);
+
+        return res.status(200).json({
+          sessions: sessions.rows,
+          totalPages: totalPages,
+          currentPage: page,
+        });
       } else {
         return res.status(404).json({
           message: "session not found",
@@ -85,11 +101,27 @@ class SessionController {
 
   async expertSessions(req: AuthenticatedExpertRequest, res: Response) {
     try {
-      const session = await db.Session.findAll({
+      let { page, limit } = req.query as any;
+
+      page = page ? parseInt(page, 10) : 1;
+      limit = limit ? parseInt(limit, 10) : 10;
+
+      const offset = (page - 1) * limit;
+
+      const sessions = await db.Session.findAndCountAll({
         where: { expertId: req.id },
+        limit: limit,
+        offset: offset,
       });
-      if (session) {
-        return res.status(200).json(session);
+
+      if (sessions.rows.length > 0) {
+        const totalPages = Math.ceil(sessions.count / limit);
+
+        return res.status(200).json({
+          sessions: sessions.rows,
+          totalPages: totalPages,
+          currentPage: page,
+        });
       } else {
         return res.status(404).json({
           message: "session not found",
@@ -106,12 +138,29 @@ class SessionController {
 
   async sessions(req: Request, res: Response) {
     try {
-      const sessions = await db.Session.findAll();
-      if (sessions) {
-        return res.status(200).json(sessions);
+      let { page, limit } = req.query as any;
+
+      page = page ? parseInt(page, 10) : 1;
+      limit = limit ? parseInt(limit, 10) : 10;
+
+      const offset = (page - 1) * limit;
+
+      const sessions = await db.Session.findAndCountAll({
+        limit: limit,
+        offset: offset,
+      });
+
+      if (sessions.rows.length > 0) {
+        const totalPages = Math.ceil(sessions.count / limit);
+
+        return res.status(200).json({
+          sessions: sessions.rows,
+          totalPages: totalPages,
+          currentPage: page,
+        });
       } else {
         return res.status(404).json({
-          message: "no user found",
+          message: "no sesson found",
         });
       }
     } catch (error) {

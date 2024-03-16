@@ -415,9 +415,26 @@ class UserController {
 
   async users(req: Request, res: Response) {
     try {
-      const users = await db.User.findAll();
-      if (users) {
-        return res.status(200).json(users);
+      let { page, limit } = req.query as any;
+
+      page = page ? parseInt(page, 10) : 1;
+      limit = limit ? parseInt(limit, 10) : 10;
+
+      const offset = (page - 1) * limit;
+
+      const users = await db.User.findAndCountAll({
+        limit: limit,
+        offset: offset,
+      });
+
+      if (users.rows.length > 0) {
+        const totalPages = Math.ceil(users.count / limit);
+
+        return res.status(200).json({
+          users: users.rows,
+          totalPages: totalPages,
+          currentPage: page,
+        });
       } else {
         return res.status(404).json({
           message: "no user found",
