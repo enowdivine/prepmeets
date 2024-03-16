@@ -41,17 +41,13 @@ class ConversationController {
         conversations.map(async (conversation: any) => {
           const memberIds = conversation.members;
 
-          // Fetch user data for each member
           const users = await Promise.all(
             memberIds.map(async (userId: any) => {
-              // Fetch user data from the database
               const user = await db.User.findByPk(userId);
-              // Return user data
               return user;
             })
           );
 
-          // Replace member IDs with user data
           const updatedMembers = users.map((user) => ({
             id: user.id,
             role: user.role,
@@ -62,19 +58,17 @@ class ConversationController {
             phone: user.phone,
           }));
 
-          // Fetch the last message for the conversation
-          const lastMessage = await db.Message.findOne({
-            where: {
-              conversationId: conversation.id,
-            },
-            order: [["createdAt", "DESC"]],
-          });
+          // const lastMessage = await db.Messages.findOne({
+          //   where: {
+          //     conversationId: conversation.id,
+          //   },
+          //   order: [["createdAt", "DESC"]],
+          // });
 
-          // Replace member IDs in the conversation object with user data
           const updatedConversation = {
             ...conversation.toJSON(),
             members: updatedMembers,
-            lastMessage: lastMessage ? lastMessage.toJSON() : null,
+            // lastMessage: lastMessage ? lastMessage.toJSON() : null,
           };
 
           return updatedConversation;
