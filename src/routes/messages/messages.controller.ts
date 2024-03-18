@@ -11,7 +11,7 @@ class MessagesController {
         receiverId: req.body.receiverId,
         message: req.body.message,
       };
-      const savedMessage = await db.Messages.create(message);
+      const savedMessage = await db.Message.create(message);
       res.status(200).json(savedMessage);
     } catch (error) {
       return res.status(500).json({
@@ -23,7 +23,7 @@ class MessagesController {
 
   async getUserMessages(req: AuthenticatedRequest, res: Response) {
     try {
-      const messages = await db.Messages.findAll({
+      const messages = await db.Message.findAll({
         where: { conversationId: req.id },
       });
       res.status(200).json(messages);

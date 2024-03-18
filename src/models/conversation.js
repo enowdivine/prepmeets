@@ -23,10 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
     },
-  },
-    {
-      sequelize,
-      modelName: "Conversation",
-    });
+  }, {
+    sequelize,
+    modelName: 'Conversation',
+  });
   return Conversation;
 };

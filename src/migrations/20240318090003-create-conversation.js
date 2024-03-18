@@ -5,9 +5,9 @@ module.exports = {
     await queryInterface.createTable('Conversations', {
       id: {
         allowNull: false,
-        type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
       },
       members: {
         type: Sequelize.ARRAY(Sequelize.STRING),

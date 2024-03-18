@@ -5,6 +5,7 @@ dotenv.config();
 
 export interface AuthenticatedRequest extends Request {
   id?: string; // Define the userId property
+  role?: string;
 }
 
 export default function (req: Request, res: Response, next: NextFunction) {
@@ -25,6 +26,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
         });
       if (payload) {
         (req as AuthenticatedRequest).id = payload.id;
+        (req as AuthenticatedRequest).role = payload.role;
         next();
       } else {
         return res.json({
