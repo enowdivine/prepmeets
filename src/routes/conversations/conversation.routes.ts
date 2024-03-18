@@ -21,6 +21,12 @@ const conversations = new Conversations();
  *              receiverId:
  *                 type: string
  *                 description: receiver ID
+ *              senderRole:
+ *                 type: string
+ *                 description: senderRole
+ *              receiverRole:
+ *                 type: string
+ *                 description: receiverRole
  */
 
 /**
