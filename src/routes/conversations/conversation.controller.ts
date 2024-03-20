@@ -25,15 +25,92 @@ class ConversationController {
       });
 
       if (existingConversation) {
-        return res.status(200).json(existingConversation);
+        // changes
+        const members = existingConversation.members;
+        const usersPromises = members.map(async (member: any) => {
+          const memberObj = JSON.parse(member);
+          const memberId = JSON.parse(memberObj.id);
+
+          if (memberObj.role === "client") {
+            const user = await db.User.findByPk(memberId);
+            return user;
+          } else {
+            const user = await db.Expert.findByPk(memberId);
+            return user;
+          }
+        });
+        const users = await Promise.all(usersPromises);
+
+        const updatedMembers = users.map((user) => {
+          if (user) {
+            const jsonUser = user.toJSON();
+            return {
+              id: jsonUser.id,
+              role: jsonUser.role,
+              avatar: jsonUser.avatar,
+              firstname: jsonUser.firstname,
+              lastname: jsonUser.lastname,
+              email: jsonUser.email,
+              phone: jsonUser.phone,
+            };
+          } else {
+            return null;
+          }
+        });
+
+        const updatedConversation = {
+          ...existingConversation.toJSON(),
+          members: updatedMembers,
+        };
+        // changes
+        return res.status(200).json(updatedConversation);
       }
 
       const newConversation = {
         members,
       };
 
+      // creating new conversation
       const savedConversation = await db.Conversation.create(newConversation);
-      return res.status(200).json(savedConversation);
+      // changes
+      const membersArr = savedConversation.members;
+      const usersPromises = membersArr.map(async (member: any) => {
+        const memberObj = JSON.parse(member);
+        const memberId = JSON.parse(memberObj.id);
+
+        if (memberObj.role === "client") {
+          const user = await db.User.findByPk(memberId);
+          return user;
+        } else {
+          const user = await db.Expert.findByPk(memberId);
+          return user;
+        }
+      });
+      const users = await Promise.all(usersPromises);
+
+      const updatedMembers = users.map((user) => {
+        if (user) {
+          const jsonUser = user.toJSON();
+          return {
+            id: jsonUser.id,
+            role: jsonUser.role,
+            avatar: jsonUser.avatar,
+            firstname: jsonUser.firstname,
+            lastname: jsonUser.lastname,
+            email: jsonUser.email,
+            phone: jsonUser.phone,
+          };
+        } else {
+          return null;
+        }
+      });
+
+      const updatedConversation = {
+        ...savedConversation.toJSON(),
+        members: updatedMembers,
+      };
+      // changes
+      return res.status(200).json(updatedConversation);
     } catch (error) {
       return res.status(500).json({
         message: "an error occured",
