@@ -64,7 +64,7 @@ router.post("/create", verifyToken, messages.newMessage);
 
 /**
  * @swagger
- * /api/v1/messages:
+ * /api/v1/messages/{id}:
  *   get:
  *      summary: get conversation messages
  *      tags: [Message]
@@ -86,6 +86,6 @@ router.post("/create", verifyToken, messages.newMessage);
  *          404:
  *              description: messages not found
  */
-router.get("/", verifyToken, messages.getUserMessages);
+router.get("/:id", verifyToken, messages.getUserMessages);
 
 export default router;
