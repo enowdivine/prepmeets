@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "",
     },
     message: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       defaultValue: "",
     },
   },

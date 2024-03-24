@@ -22,7 +22,7 @@ module.exports = {
         defaultValue: "",
       },
       message: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         defaultValue: "",
       },
       createdAt: {

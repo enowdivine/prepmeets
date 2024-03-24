@@ -30,7 +30,7 @@ export const MessageMap = async (sequelize: Sequelize) => {
         defaultValue: "",
       },
       message: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         defaultValue: "",
       },
     },
