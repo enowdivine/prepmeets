@@ -185,7 +185,17 @@ class ConversationController {
         })
       );
 
-      return res.status(200).json(updatedConversations);
+      // Sort the conversations based on the createdAt of their last messages
+      const sortedConversations = updatedConversations.sort((a, b) => {
+        if (!a.lastMessage) return 1;
+        if (!b.lastMessage) return -1;
+        return (
+          new Date(b.lastMessage.createdAt).getTime() -
+          new Date(a.lastMessage.createdAt).getTime()
+        );
+      });
+
+      return res.status(200).json(sortedConversations);
     } catch (error) {
       return res.status(500).json({
         message: "an error occured",
