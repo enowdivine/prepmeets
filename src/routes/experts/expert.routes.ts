@@ -54,12 +54,12 @@ const user = new ExpertCtl();
  *                  type: string
  *                  description: user bio
  *              education:
- *                  type: array
+ *                  type: string
  *                  description: lits of past or present education
  *              experience:
- *                  type: array
+ *                  type: string
  *              certificates:
- *                  type: array
+ *                  type: string
  *              gender:
  *                  type: string
  *                  description: gender
@@ -70,7 +70,7 @@ const user = new ExpertCtl();
  *                  type: string
  *                  description: location
  *              forcusarea:
- *                  type: array
+ *                  type: string
  *                  description: forcusarea
  *              havecertifications:
  *                  type: boolean
@@ -80,6 +80,8 @@ const user = new ExpertCtl();
  *              timeZone:
  *                  type: date
  *                  description: time zone
+ *              calenderSlots:
+ *                  type: string
  *              pricing:
  *                  type: object
  *                  properties:
