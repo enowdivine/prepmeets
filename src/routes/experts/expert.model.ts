@@ -83,7 +83,7 @@ export const ExpertMap = async (sequelize: Sequelize) => {
         defaultValue: false,
       },
       bio: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         defaultValue: "",
       },
       education: {

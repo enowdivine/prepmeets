@@ -47,7 +47,7 @@ module.exports = {
         defaultValue: false,
       },
       bio: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         defaultValue: "",
       },
       education: {
