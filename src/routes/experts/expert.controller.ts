@@ -315,6 +315,14 @@ class ExpertController {
             );
             return res.status(200).json({
               message: "success",
+              user: {
+                id: resUser.id,
+                role: resUser.role,
+                firstname: resUser.firstname,
+                lastname: resUser.lastname,
+                email: resUser.email,
+                phone: resUser.phone,
+              },
               token,
             });
           })
