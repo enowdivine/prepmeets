@@ -69,15 +69,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(
-  "/uploads/client/profileImage/",
-  express.static(__dirname + "/uploads/client/profileImage/")
+  "/uploads/client/images/",
+  express.static(__dirname + "/uploads/client/images/")
 );
 app.use(
-  "/uploads/expert/profileImage/",
-  express.static(__dirname + "/uploads/expert/profileImage/")
+  "/uploads/expert/images/",
+  express.static(__dirname + "/uploads/expert/images/")
 );
-app.use(express.static(path.join(__dirname, "uploads/client/profileImages"))); // Serve static files (images)
-app.use(express.static(path.join(__dirname, "uploads/expert/profileImages"))); // Serve static files (images)
+app.use(express.static(path.join(__dirname, "uploads/client/images")));
+app.use(express.static(path.join(__dirname, "uploads/expert/images")));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(`/api/${process.env.API_VERSION}/clients`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/experts`, experRoutes);
@@ -88,7 +88,7 @@ app.use(`/api/${process.env.API_VERSION}/conversations`, conversationRoutes);
 app.use(`/api/${process.env.API_VERSION}/subscriptions`, subscriptionRoutes);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Prepmeets Server");
+  res.send("Prepmeets Server 🔥");
 });
 
 server.listen(port, async () => {

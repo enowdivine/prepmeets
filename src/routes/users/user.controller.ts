@@ -287,7 +287,7 @@ class UserController {
       Object.keys(files).forEach((key) => {
         const filepath = path.join(
           appRoot,
-          "uploads/client/profileImage",
+          "uploads/client/images",
           files[key].name
         );
         files[key].mv(filepath, (err: any) => {
@@ -304,7 +304,7 @@ class UserController {
         if (user.avatar !== null) {
           const filePathToDelete = path.join(
             __dirname,
-            "uploads/client/profileImage",
+            "uploads/client/images",
             user.avatar
           );
           // Use fs.unlink to delete the file

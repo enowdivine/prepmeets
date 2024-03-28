@@ -377,7 +377,7 @@ class ExpertController {
       Object.keys(files).forEach((key) => {
         const filepath = path.join(
           appRoot,
-          "uploads/expert/profileImages",
+          "uploads/expert/images",
           files[key].name
         );
         files[key].mv(filepath, (err: any) => {
@@ -394,7 +394,7 @@ class ExpertController {
         if (user?.avatar !== null) {
           const filePathToDelete = path.join(
             __dirname,
-            "uploads/expert/profileImages",
+            "uploads/expert/images",
             user.avatar
           );
           // Use fs.unlink to delete the file
