@@ -236,30 +236,33 @@ class UserController {
         });
         await user
           .save()
-          .then((resUser: any) => {
+          .then(async (resUser: any) => {
+            const updateduser = await db.User.findOne({
+              where: { id: req.id },
+            });
             const token: string = jwt.sign(
               {
-                id: resUser?.id,
-                role: resUser?.role,
-                phone: resUser?.phone,
-                email: resUser?.email,
+                id: updateduser?.id,
+                role: updateduser?.role,
+                phone: updateduser?.phone,
+                email: updateduser?.email,
               },
               process.env.JWT_SECRET as string
             );
             return res.status(200).json({
               message: "success",
               user: {
-                id: resUser.id,
-                role: resUser.role,
-                avatar: resUser?.avatar,
-                firstname: resUser.firstname,
-                lastname: resUser.lastname,
-                email: resUser.email,
-                phone: resUser.phone,
-                whatINeed: resUser.whatINeed,
-                location: resUser.location,
-                accountId: resUser.accountId,
-                provider: resUser.provider,
+                id: updateduser.id,
+                role: updateduser.role,
+                avatar: updateduser?.avatar,
+                firstname: updateduser.firstname,
+                lastname: updateduser.lastname,
+                email: updateduser.email,
+                phone: updateduser.phone,
+                whatINeed: updateduser.whatINeed,
+                location: updateduser.location,
+                accountId: updateduser.accountId,
+                provider: updateduser.provider,
               },
               token,
             });
