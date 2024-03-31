@@ -251,12 +251,15 @@ class UserController {
               user: {
                 id: resUser.id,
                 role: resUser.role,
+                avatar: resUser?.avatar,
                 firstname: resUser.firstname,
                 lastname: resUser.lastname,
                 email: resUser.email,
                 phone: resUser.phone,
                 whatINeed: resUser.whatINeed,
                 location: resUser.location,
+                accountId: resUser.accountId,
+                provider: resUser.provider,
               },
               token,
             });

@@ -318,6 +318,7 @@ class ExpertController {
               user: {
                 id: resUser.id,
                 role: resUser.role,
+                avatar: resUser?.avatar,
                 firstname: resUser.firstname,
                 lastname: resUser.lastname,
                 phone: resUser.phone,
@@ -347,6 +348,8 @@ class ExpertController {
                   IBAN: resUser.IBAN,
                   SWIFTBIC: resUser.SWIFTBIC,
                 },
+                accountId: resUser.accountId,
+                provider: resUser.provider,
               },
               token,
             });
