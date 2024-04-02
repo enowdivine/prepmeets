@@ -69,7 +69,7 @@ const user = new ExpertCtl();
  *              location:
  *                  type: string
  *                  description: location
- *              forcusarea:
+ *              focusarea:
  *                  type: string
  *                  description: forcusarea
  *              havecertifications:
@@ -333,7 +333,7 @@ router.put(
   ExpertAuthMiddleware,
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
-  fileExtLimiter([".png", ".jpg", ".jpeg"]),
+  fileExtLimiter(["image/jpeg", "image/png", "image/jpg"]),
   fileSizeLimiter,
   user.uploadProfileImage
 );

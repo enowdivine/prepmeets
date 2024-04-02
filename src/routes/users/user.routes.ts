@@ -281,7 +281,7 @@ router.put(
   UserAuthMiddleware,
   fileUpload({ createParentPath: true }),
   filesPayloadExists,
-  fileExtLimiter([".png", ".jpg", ".jpeg"]),
+  fileExtLimiter(["image/jpeg", "image/png", "image/jpg"]),
   fileSizeLimiter,
   user.uploadProfileImage
 );
