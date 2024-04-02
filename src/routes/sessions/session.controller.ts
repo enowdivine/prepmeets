@@ -62,7 +62,7 @@ class SessionController {
     }
   }
 
-  async clientSessions(req: AuthenticatedClientRequest, res: Response) {
+  async clientSessions(req: Request, res: Response) {
     try {
       let { page, limit } = req.query as any;
 
@@ -72,7 +72,7 @@ class SessionController {
       const offset = (page - 1) * limit;
 
       const sessions = await db.Session.findAndCountAll({
-        where: { clientId: req.id },
+        where: { clientId: req.params.id },
         limit: limit,
         offset: offset,
       });
@@ -99,7 +99,7 @@ class SessionController {
     }
   }
 
-  async expertSessions(req: AuthenticatedExpertRequest, res: Response) {
+  async expertSessions(req: Request, res: Response) {
     try {
       let { page, limit } = req.query as any;
 
@@ -109,7 +109,7 @@ class SessionController {
       const offset = (page - 1) * limit;
 
       const sessions = await db.Session.findAndCountAll({
-        where: { expertId: req.id },
+        where: { expertId: req.params.id },
         limit: limit,
         offset: offset,
       });
@@ -172,10 +172,10 @@ class SessionController {
     }
   }
 
-  async updateStatus(req: AuthenticatedRequest, res: Response) {
+  async updateStatus(req: Request, res: Response) {
     try {
       const session = await db.Session.findOne({
-        where: { id: req.id },
+        where: { id: req.params.id },
       });
       if (session) {
         session.sessionStatus = req.body.sessionStatus;
