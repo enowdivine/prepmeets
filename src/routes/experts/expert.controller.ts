@@ -321,6 +321,7 @@ class ExpertController {
               user: {
                 id: updateduser.id,
                 role: updateduser.role,
+                introvideo: updateduser.introvideo,
                 avatar: updateduser?.avatar,
                 firstname: updateduser.firstname,
                 lastname: updateduser.lastname,
