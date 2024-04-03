@@ -288,19 +288,10 @@ class ExpertController {
           timeNotice: req.body.timeNotice,
           timezone: req.body.timezone,
           calenderSlots: req.body.calenderSlots,
-          pricing: {
-            starterPrice: req.body.starterPrice,
-            recommendedPrice: req.body.recommendedPrice,
-            bestPrice: req.body.bestPrice,
-          },
+          pricing: req.body.pricing,
           trialSessions: req.body.trialSessions,
           visibilityLevel: req.body.visibilityLevel,
-          payments: {
-            fullname: req.body.fullname,
-            paymentStream: req.body.paymentStream,
-            IBAN: req.body.IBAN,
-            SWIFTBIC: req.body.SWIFTBIC,
-          },
+          payments: req.body.payments,
         });
         await user
           .save()
@@ -340,19 +331,10 @@ class ExpertController {
                 timeNotice: updateduser.timeNotice,
                 timezone: updateduser.timezone,
                 calenderSlots: updateduser.calenderSlots,
-                pricing: {
-                  starterPrice: updateduser.starterPrice,
-                  recommendedPrice: updateduser.recommendedPrice,
-                  bestPrice: updateduser.bestPrice,
-                },
+                pricing: updateduser.pricing,
                 trialSessions: updateduser.trialSessions,
                 visibilityLevel: updateduser.visibilityLevel,
-                payments: {
-                  fullname: updateduser.fullname,
-                  paymentStream: updateduser.paymentStream,
-                  IBAN: updateduser.IBAN,
-                  SWIFTBIC: updateduser.SWIFTBIC,
-                },
+                payments: updateduser.payments,
                 accountId: updateduser.accountId,
                 provider: updateduser.provider,
               },
