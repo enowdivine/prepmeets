@@ -499,6 +499,25 @@ class ExpertController {
     }
   }
 
+  async userById(req: Request, res: Response) {
+    try {
+      const user = await db.Expert.findOne({ where: { id: req.params.id } });
+      if (user) {
+        return res.status(200).json(user);
+      } else {
+        return res.status(404).json({
+          message: "user not found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching user", error);
+      return res.status(500).json({
+        message: "an error occured",
+        error,
+      });
+    }
+  }
+
   async users(req: Request, res: Response) {
     try {
       let { page, limit } = req.query as any;

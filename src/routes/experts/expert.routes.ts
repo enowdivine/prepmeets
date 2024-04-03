@@ -279,6 +279,31 @@ router.get("/details", verifyToken, user.user);
 
 /**
  * @swagger
+ * /api/v1/experts/{id}:
+ *   get:
+ *      summary: get expert by id
+ *      tags: [Expert]
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            schema:
+ *              type: string
+ *            required: true
+ *            description: user id
+ *      responses:
+ *          200:
+ *              description: returns a single expert
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/Expert'
+ *          404:
+ *              description: expert was not found
+ */
+router.get("/:id", verifyToken, user.userById);
+
+/**
+ * @swagger
  * /api/v1/experts?page=1&limit=10:
  *   get:
  *      summary: get all experts
