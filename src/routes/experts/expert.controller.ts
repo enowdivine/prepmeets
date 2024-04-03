@@ -271,6 +271,7 @@ class ExpertController {
       const user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
         user.set({
+          introvideo: req.body.introvideo,
           firstname: req.body.firstname,
           lastname: req.body.lastname,
           phone: req.body.phone,
