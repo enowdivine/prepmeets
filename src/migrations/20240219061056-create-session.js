@@ -39,11 +39,11 @@ module.exports = {
       },
       sessionStatus: {
         type: Sequelize.STRING,
-        defaultValue: "pending",
+        defaultValue: "PENDING",
       },
       paymentStatus: {
         type: Sequelize.STRING,
-        defaultValue: "",
+        defaultValue: "PENDING",
       },
       prepmeetCommission: {
         type: Sequelize.INTEGER,

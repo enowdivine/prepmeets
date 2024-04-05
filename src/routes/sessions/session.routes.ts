@@ -60,7 +60,7 @@ const session = new SessionCtl();
 
 /**
  * @swagger
- * /api/v1/sessions/create:
+ * /api/v1/sessions/create-checkout-session:
  *   post:
  *      summary: create a new session
  *      tags: [Session]
@@ -80,7 +80,7 @@ const session = new SessionCtl();
  *          500:
  *              description: an error occured
  */
-router.post("/create", userAuthMiddleware, session.create);
+router.post("/create-checkout-session", userAuthMiddleware, session.create);
 
 /**
  * @swagger
@@ -211,5 +211,11 @@ router.get("/", verifyToken, session.sessions);
  *              description: an error occured
  */
 router.put("/update-status/:id", verifyToken, session.updateStatus);
+
+router.post(
+  "/webhook",
+  express.json({ type: "application/json" }),
+  session.webhook
+);
 
 export default router;

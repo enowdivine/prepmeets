@@ -91,6 +91,14 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Prepmeets Server 🔥");
 });
 
+app.get("/payment-success", (req: Request, res: Response) => {
+  res.send("Payment Successful");
+});
+
+app.get("/sessions", (req: Request, res: Response) => {
+  res.send("Payment Cancelled");
+});
+
 server.listen(port, async () => {
   console.log(`Server running on ${process.env.SERVER_URL}:${port}`);
   try {

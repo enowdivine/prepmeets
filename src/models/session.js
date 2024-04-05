@@ -50,11 +50,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     sessionStatus: {
       type: DataTypes.STRING,
-      defaultValue: "pending",
+      defaultValue: "PENDING",
     },
     paymentStatus: {
       type: DataTypes.STRING,
-      defaultValue: "",
+      defaultValue: "PENDING",
     },
     prepmeetCommission: {
       type: DataTypes.INTEGER,
