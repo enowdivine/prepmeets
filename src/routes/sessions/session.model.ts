@@ -61,7 +61,7 @@ export const SessionMap = async (sequelize: Sequelize) => {
       },
       prepmeetCommission: {
         type: DataTypes.INTEGER,
-        defaultValue: 0,
+        defaultValue: 15,
       },
     },
     {

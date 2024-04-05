@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 const db = require("../../models/index");
 import _ from "lodash";
-import { AuthenticatedExpertRequest } from "../../middleware/auth/verifyExpert";
-import { AuthenticatedClientRequest } from "../../middleware/auth/verifyUser";
-import { AuthenticatedRequest } from "../../middleware/auth/verifyToken";
 
 class SessionController {
   async create(req: Request, res: Response) {
