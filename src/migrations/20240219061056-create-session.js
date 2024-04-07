@@ -17,10 +17,6 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: "",
       },
-      roomId: {
-        type: Sequelize.STRING,
-        defaultValue: "",
-      },
       sessionType: {
         type: Sequelize.STRING,
         defaultValue: 0,

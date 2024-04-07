@@ -2,16 +2,13 @@ import { Request, Response } from "express";
 const db = require("../../models/index");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 import _ from "lodash";
-import { uuid } from "uuidv4";
 
 class SessionController {
   async create(req: Request, res: Response) {
     try {
-      const roomId = uuid();
       const booking = {
         expertId: req.body.expertId,
         clientId: req.body.clientId,
-        roomId,
         sessionType: req.body.sessionType,
         sessionDate: req.body.sessionDate,
         duration: req.body.duration,
