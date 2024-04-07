@@ -23,10 +23,10 @@ const onlineSessionLogic = (io: any) => {
   io.on("connection", (socket: any) => {
     socket.on("join-room", (roomId: string, userId: string) => {
       socket.join(roomId);
-      socket.to(roomId).broadcast.emit("user-connected", userId);
+      io.to(roomId).broadcast.emit("user-connected", userId);
 
       socket.on("disconnect", () => {
-        socket.to(roomId).broadcast.emit("user-disconnected", userId);
+        io.to(roomId).broadcast.emit("user-disconnected", userId);
       });
     });
   });

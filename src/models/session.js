@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: "",
     },
+    roomId: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+    },
     sessionType: {
       type: DataTypes.STRING,
       defaultValue: 0,
