@@ -37,6 +37,10 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: null,
       },
+      sessionLink: {
+        type: Sequelize.STRING,
+        defaultValue: "",
+      },
       sessionStatus: {
         type: Sequelize.STRING,
         defaultValue: "PENDING",

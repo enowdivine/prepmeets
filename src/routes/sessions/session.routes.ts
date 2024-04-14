@@ -80,8 +80,7 @@ const session = new SessionCtl();
  *          500:
  *              description: an error occured
  */
-router.post("/create-checkout-session", session.create);
-// router.post("/create-checkout-session", userAuthMiddleware, session.create);
+router.post("/create-checkout-session", userAuthMiddleware, session.create);
 
 /**
  * @swagger

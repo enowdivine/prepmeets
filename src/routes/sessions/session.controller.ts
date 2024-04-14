@@ -2,81 +2,135 @@ import { Request, Response } from "express";
 const db = require("../../models/index");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 import _ from "lodash";
+import Meet from "../../helpers/googleMeet";
 
 class SessionController {
   async create(req: Request, res: Response) {
     try {
-      const booking = {
-        expertId: req.body.expertId,
-        clientId: req.body.clientId,
-        sessionType: req.body.sessionType,
-        sessionDate: req.body.sessionDate,
-        duration: req.body.duration,
-        paymentType: req.body.paymentType,
-        paymentAmount: req.body.paymentAmount,
-      };
+      Meet({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+        date: req.body.sessionDate,
+        startTime: req.body.startTime,
+        endTime: req.body.endTime,
+        summary: req.body.summary,
+        location: req.body.location,
+        description: req.body.description,
+        attendees: [
+          { email: req.body.clientEmail },
+          { email: req.body.expertEmail },
+        ],
+        alert: 10,
+      })
+        .then((response) => {
+          if (response.status === "success") {
+            const booking = {
+              expertId: req.body.expertId,
+              clientId: req.body.clientId,
+              sessionType: req.body.sessionType,
+              sessionDate: req.body.sessionDate,
+              duration: req.body.duration,
+              paymentType: req.body.paymentType,
+              paymentAmount: req.body.paymentAmount,
+              sessionLink: response.link,
+            };
 
-      db.Session.create(booking)
-        .then(async (booking: any) => {
-          const savedSession = booking.toJSON();
-          const customer = await stripe.customers.create({
-            metadata: {
-              sessionId: savedSession.id,
-              expertId: savedSession.expertId,
-              clientId: savedSession.clientId,
-              sessionType: savedSession.sessionType,
-              sessionDate: savedSession.sessionDate,
-              duration: savedSession.duration,
-              paymentType: savedSession.paymentType,
-              paymentAmount: savedSession.paymentAmount,
-            },
-          });
+            db.Session.create(booking)
+              .then(async (booking: any) => {
+                const savedSession = booking.toJSON();
+                const customer = await stripe.customers.create({
+                  metadata: {
+                    sessionId: savedSession.id,
+                    expertId: savedSession.expertId,
+                    clientId: savedSession.clientId,
+                    sessionType: savedSession.sessionType,
+                    sessionDate: savedSession.sessionDate,
+                    duration: savedSession.duration,
+                    paymentType: savedSession.paymentType,
+                    paymentAmount: savedSession.paymentAmount,
+                  },
+                });
 
-          const line_items = [
-            {
-              price_data: {
-                currency: "usd",
-                product_data: {
-                  name: req.body.sessionType,
-                },
-                unit_amount: req.body.paymentAmount * 100,
-              },
-              quantity: 1,
-            },
-          ];
+                const line_items = [
+                  {
+                    price_data: {
+                      currency: "usd",
+                      product_data: {
+                        name: req.body.sessionType,
+                      },
+                      unit_amount: req.body.paymentAmount * 100,
+                    },
+                    quantity: 1,
+                  },
+                ];
 
-          const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            phone_number_collection: {
-              enabled: true,
-            },
-            line_items,
-            mode: "payment",
-            customer: customer.id,
-            success_url: `${process.env.FRONTEND_URL}/success`,
-            cancel_url: `${process.env.FRONTEND_URL}/cancelled`,
-          });
+                const session = await stripe.checkout.sessions.create({
+                  payment_method_types: ["card"],
+                  phone_number_collection: {
+                    enabled: true,
+                  },
+                  line_items,
+                  mode: "payment",
+                  customer: customer.id,
+                  success_url: `${process.env.FRONTEND_URL}/success`,
+                  cancel_url: `${process.env.FRONTEND_URL}/cancelled`,
+                });
 
-          res.status(201).json({
-            message: "success",
-            url: session.url,
-            savedSession,
-          });
+                res.status(201).json({
+                  message: "success",
+                  url: session.url,
+                  savedSession,
+                });
+              })
+              .catch((err: any) => {
+                res.status(500).json({
+                  message: "error creating session",
+                  error: err,
+                });
+              });
+          } else {
+            return res.status(500).json({
+              message: response.message,
+            });
+          }
         })
-        .catch((err: any) => {
-          res.status(500).json({
-            message: "an error occured",
+        .catch((err) => {
+          return res.status(500).json({
+            message: "error creating meeting link",
             error: err,
           });
         });
     } catch (error) {
-      console.error("booking failed", error);
       return res.status(500).json({
         message: "an error occured",
         error,
       });
     }
   }
+
+  // async create(req: Request, res: Response) {
+  //   try {
+  //     //  const meetClient = new SpacesServiceClient({
+  //     //    authClient: req.googleAuthClient,
+  //     //  });
+  //     // const booking = {
+  //     //   expertId: req.body.expertId,
+  //     //   clientId: req.body.clientId,
+  //     //   sessionType: req.body.sessionType,
+  //     //   sessionDate: req.body.sessionDate,
+  //     //   duration: req.body.duration,
+  //     //   paymentType: req.body.paymentType,
+  //     //   paymentAmount: req.body.paymentAmount,
+  //     // };
+  //     // const response = await meetClient.createSpace(booking);
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       message: "an error occured",
+  //       error,
+  //     });
+  //   }
+  // }
 
   async webhook(req: Request, res: Response) {
     let data: { customer: any };

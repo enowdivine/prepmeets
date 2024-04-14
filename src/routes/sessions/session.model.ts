@@ -11,6 +11,7 @@ export default class Session extends Model {
   public duration?: string;
   public sessionDate?: Date;
   public sessionStatus?: string;
+  public sessionLink?: string;
   public paymentStatus?: string;
   public prepmeetCommission?: number;
 }
@@ -59,6 +60,10 @@ export const SessionMap = async (sequelize: Sequelize) => {
       sessionStatus: {
         type: DataTypes.STRING,
         defaultValue: "PENDING",
+      },
+      sessionLink: {
+        type: DataTypes.STRING,
+        defaultValue: "",
       },
       paymentStatus: {
         type: DataTypes.STRING,

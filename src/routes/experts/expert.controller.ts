@@ -268,8 +268,16 @@ class ExpertController {
 
   async update(req: AuthenticatedExpertRequest, res: Response) {
     try {
+      // const files: any = req.files;
       const user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
+        // if (req.body.certificates && req.body.certificates.length > 0){
+        //    for (const certificate of req.body.certificates) {
+        //      if (certificate.file) {
+
+        //      }
+        //    }
+        // }
         user.set({
           introvideo: req.body.introvideo,
           firstname: req.body.firstname,

@@ -52,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       defaultValue: "PENDING",
     },
+    sessionLink: {
+      type: DataTypes.STRING,
+      defaultValue: "",
+    },
     paymentStatus: {
       type: DataTypes.STRING,
       defaultValue: "PENDING",

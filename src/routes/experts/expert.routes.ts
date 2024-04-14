@@ -394,7 +394,13 @@ router.put(
  *          500:
  *              description: an error occured
  */
-router.put("/update-expert", ExpertAuthMiddleware, user.update);
+router.put(
+  "/update-expert",
+  ExpertAuthMiddleware,
+  fileUpload({ createParentPath: true }),
+  fileExtLimiter(["application/pdf"]),
+  user.update
+);
 
 /**
  * @swagger
