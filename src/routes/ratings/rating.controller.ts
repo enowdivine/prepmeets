@@ -77,8 +77,64 @@ class RatingController {
       if (ratings.rows.length > 0) {
         const totalPages = Math.ceil(ratings.count / limit);
 
+        // Fetch client and expert data for each rating
+        const updatedRatings = await Promise.all(
+          ratings.rows.map(async (rate: any) => {
+            const client = await db.User.findOne({
+              where: { id: parseInt(rate.userId) },
+            });
+            const expert = await db.Expert.findOne({
+              where: { id: parseInt(rate.expertId) },
+            });
+            return {
+              rate,
+              client: {
+                id: client.id,
+                role: client.role,
+                avatar: client?.avatar,
+                firstname: client.firstname,
+                lastname: client.lastname,
+                email: client.email,
+                phone: client.phone,
+                whatINeed: client.whatINeed,
+                location: client.location,
+                accountId: client.accountId,
+                provider: client.provider,
+              },
+              expert: {
+                id: expert.id,
+                role: expert.role,
+                introvideo: expert.introvideo,
+                avatar: expert?.avatar,
+                firstname: expert.firstname,
+                lastname: expert.lastname,
+                phone: expert.phone,
+                email: expert.email,
+                bio: expert.bio,
+                education: expert.education,
+                experience: expert.experience,
+                certificates: expert.certificates,
+                gender: expert.gender,
+                dateOfBirth: expert.dateOfBirth,
+                location: expert.location,
+                focusarea: expert.focusarea,
+                havecertifications: expert.havecertifications,
+                timeNotice: expert.timeNotice,
+                timezone: expert.timezone,
+                calenderSlots: expert.calenderSlots,
+                pricing: expert.pricing,
+                trialSessions: expert.trialSessions,
+                visibilityLevel: expert.visibilityLevel,
+                payments: expert.payments,
+                accountId: expert.accountId,
+                provider: expert.provider,
+              },
+            };
+          })
+        );
+
         return res.status(200).json({
-          ratings: ratings.rows,
+          updatedRatings,
           totalPages: totalPages,
           currentPage: page,
         });
