@@ -60,7 +60,7 @@ const rating = new Ratings();
  *          500:
  *              description: an error occured
  */
-router.post("/create", rating.create);
+router.post("/create", verifyToken, rating.create);
 
 /**
  * @swagger
