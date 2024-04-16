@@ -11,6 +11,7 @@ import ratingRoutes from "./routes/ratings/rating.routes";
 import messageRoutes from "./routes/messages/messages.routes";
 import conversationRoutes from "./routes/conversations/conversation.routes";
 import subscriptionRoutes from "./routes/subscription/subscription.routes";
+import slotRoutes from "./routes/calenderSlots/slots.routes";
 
 // database import
 import sequelizeDB from "./config/db";
@@ -81,6 +82,7 @@ app.use(express.static(path.join(__dirname, "uploads/expert/images")));
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(`/api/${process.env.API_VERSION}/clients`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/experts`, experRoutes);
+app.use(`/api/${process.env.API_VERSION}/slots`, slotRoutes);
 app.use(`/api/${process.env.API_VERSION}/sessions`, sessionRoutes);
 app.use(`/api/${process.env.API_VERSION}/ratings`, ratingRoutes);
 app.use(`/api/${process.env.API_VERSION}/messages`, messageRoutes);

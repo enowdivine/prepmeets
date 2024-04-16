@@ -254,8 +254,9 @@ class SessionController {
           currentPage: page,
         });
       } else {
-        return res.status(404).json({
-          message: "session not found",
+        return res.status(200).json({
+          message: "sessions not found",
+          sessions: [],
         });
       }
     } catch (error) {
@@ -291,8 +292,9 @@ class SessionController {
           currentPage: page,
         });
       } else {
-        return res.status(404).json({
-          message: "session not found",
+        return res.status(200).json({
+          message: "sessions not found",
+          sessions: [],
         });
       }
     } catch (error) {
@@ -327,8 +329,9 @@ class SessionController {
           currentPage: page,
         });
       } else {
-        return res.status(404).json({
-          message: "no sesson found",
+        return res.status(200).json({
+          message: "sessions not found",
+          sessions: [],
         });
       }
     } catch (error) {
