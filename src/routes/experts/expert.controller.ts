@@ -720,9 +720,38 @@ class ExpertController {
           },
           process.env.JWT_SECRET as string
         );
-        res.status(201).json({
+        return res.status(201).json({
           message: "success",
           token,
+          user: {
+            id: user.id,
+            role: user.role,
+            avatar: user.avatar,
+            introvideo: user.introvideo,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            phone: user.phone,
+            bio: user.bio,
+            education: user.education,
+            experience: user.experience,
+            certificates: user.certificates,
+            gender: user.gender,
+            dateOfBirth: user.dateOfBirth,
+            location: user.location,
+            focusarea: user.focusarea,
+            havecertifications: user.havecertifications,
+            timeNotice: user.timeNotice,
+            timezone: user.timezone,
+            calenderSlots: user.calenderSlots,
+            pricing: user.pricing,
+            trialSessions: user.trialSessions,
+            visibilityLevel: user.visibilityLevel,
+            payments: user.payments,
+            rating: user.rating,
+            accountId: user.accountId,
+            provider: user.provider,
+          },
         });
       }
       const userData = {
@@ -749,9 +778,38 @@ class ExpertController {
         title: welcomeEmailTitle(newuser?.firstname as string),
         message: welcomeEmail(newuser?.firstname as string),
       });
-      res.status(201).json({
+      return res.status(201).json({
         message: "success",
         token,
+        user: {
+          id: newuser.id,
+          role: newuser.role,
+          avatar: newuser.avatar,
+          introvideo: newuser.introvideo,
+          firstname: newuser.firstname,
+          lastname: newuser.lastname,
+          email: newuser.email,
+          phone: newuser.phone,
+          bio: newuser.bio,
+          education: newuser.education,
+          experience: newuser.experience,
+          certificates: newuser.certificates,
+          gender: newuser.gender,
+          dateOfBirth: newuser.dateOfBirth,
+          location: newuser.location,
+          focusarea: newuser.focusarea,
+          havecertifications: newuser.havecertifications,
+          timeNotice: newuser.timeNotice,
+          timezone: newuser.timezone,
+          calenderSlots: newuser.calenderSlots,
+          pricing: newuser.pricing,
+          trialSessions: newuser.trialSessions,
+          visibilityLevel: newuser.visibilityLevel,
+          payments: newuser.payments,
+          rating: newuser.rating,
+          accountId: newuser.accountId,
+          provider: newuser.provider,
+        },
       });
     } catch (error) {
       console.error("user registration error", error);

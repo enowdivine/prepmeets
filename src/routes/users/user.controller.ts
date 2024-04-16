@@ -607,9 +607,22 @@ class UserController {
           },
           process.env.JWT_SECRET as string
         );
-        res.status(201).json({
+        return res.status(201).json({
           message: "success",
           token,
+          user: {
+            id: user.id,
+            role: user.role,
+            avatar: user.avatar,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            phone: user.phone,
+            whatINeed: user.whatINeed,
+            location: user.location,
+            accountId: user.accountId,
+            provider: user.provider,
+          },
         });
       }
       const userData = {
@@ -636,9 +649,22 @@ class UserController {
         title: accountApprovedTitle(newuser?.firstname as string),
         message: accountApproved(),
       });
-      res.status(201).json({
+      return res.status(201).json({
         message: "success",
         token,
+        user: {
+          id: newuser.id,
+          role: newuser.role,
+          avatar: newuser.avatar,
+          firstname: newuser.firstname,
+          lastname: newuser.lastname,
+          email: newuser.email,
+          phone: newuser.phone,
+          whatINeed: newuser.whatINeed,
+          location: newuser.location,
+          accountId: newuser.accountId,
+          provider: newuser.provider,
+        },
       });
     } catch (error) {
       console.error("user registration error", error);
