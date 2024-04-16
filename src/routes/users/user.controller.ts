@@ -615,6 +615,8 @@ class UserController {
       const userData = {
         accountId: req.body.accountId,
         provider: req.body.provider,
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
         email: req.body.email,
         emailConfirmed: true,
       };
