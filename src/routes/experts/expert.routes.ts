@@ -398,6 +398,8 @@ router.put(
   "/update-expert",
   ExpertAuthMiddleware,
   fileUpload({ createParentPath: true }),
+  filesPayloadExists,
+  fileSizeLimiter,
   fileExtLimiter(["application/pdf"]),
   user.update
 );

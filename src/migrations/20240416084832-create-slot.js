@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       expertId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         defaultValue: null,
       },
       title: {

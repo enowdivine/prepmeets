@@ -4,6 +4,7 @@ export default class Session extends Model {
   public id?: number;
   public expertId?: string;
   public clientId?: string;
+  public slotId?: string;
   public roomId?: string;
   public sessionType?: string;
   public paymentType?: string;
@@ -30,6 +31,10 @@ export const SessionMap = async (sequelize: Sequelize) => {
         defaultValue: "",
       },
       clientId: {
+        type: DataTypes.STRING,
+        defaultValue: "",
+      },
+      slotId: {
         type: DataTypes.STRING,
         defaultValue: "",
       },

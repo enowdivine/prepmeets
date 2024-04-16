@@ -23,11 +23,23 @@ class SessionController {
         ],
         alert: 10,
       })
-        .then((response) => {
+        .then(async (response) => {
           if (response.status === "success") {
+            const slot = db.slot.findOne({
+              where: { id: parseInt(req.body.slotId) },
+            });
+            if (slot) {
+              slot.available = true;
+              await slot.save();
+            } else {
+              return res.status(404).json({
+                message: "slot not found",
+              });
+            }
             const booking = {
               expertId: req.body.expertId,
               clientId: req.body.clientId,
+              slotId: req.body.slotId,
               sessionType: req.body.sessionType,
               sessionDate: req.body.sessionDate,
               duration: req.body.duration,
@@ -248,8 +260,25 @@ class SessionController {
       if (sessions.rows.length > 0) {
         const totalPages = Math.ceil(sessions.count / limit);
 
+        // Fetch client and expert data for each session
+        const sessionUpdated = await Promise.all(
+          sessions.rows.map(async (session: any) => {
+            const client = await db.Client.findOne({
+              where: { id: parseInt(session.clientId) },
+            });
+            const expert = await db.Expert.findOne({
+              where: { id: parseInt(session.expertId) },
+            });
+            return {
+              session,
+              client,
+              expert,
+            };
+          })
+        );
+
         return res.status(200).json({
-          sessions: sessions.rows,
+          sessions: sessionUpdated,
           totalPages: totalPages,
           currentPage: page,
         });

@@ -2,7 +2,7 @@ import { Sequelize, DataTypes, Model } from "sequelize";
 
 export default class Slot extends Model {
   public id?: number;
-  public expertId?: number;
+  public expertId?: string;
   public title?: string;
   public start?: Date;
   public end?: Date;
@@ -20,7 +20,7 @@ export const SlotsMap = async (sequelize: Sequelize) => {
         primaryKey: true,
       },
       expertId: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         defaultValue: null,
       },
       title: {

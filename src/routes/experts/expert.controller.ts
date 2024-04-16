@@ -268,16 +268,28 @@ class ExpertController {
 
   async update(req: AuthenticatedExpertRequest, res: Response) {
     try {
-      // const files: any = req.files;
       const user = await db.Expert.findOne({ where: { id: req.id } });
       if (user) {
-        // if (req.body.certificates && req.body.certificates.length > 0){
-        //    for (const certificate of req.body.certificates) {
-        //      if (certificate.file) {
-
-        //      }
-        //    }
-        // }
+        if (req.body.certificates && req.body.certificates.length > 0) {
+          for (const certificate of req.body.certificates) {
+            if (certificate.file) {
+              const file = certificate.file;
+              const filepath = path.join(
+                appRoot,
+                "uploads/expert/certs",
+                file.name
+              );
+              file.mv(filepath, (err: any) => {
+                if (err) {
+                  return res.status(500).json({
+                    message: "Error uploading ",
+                    error: err,
+                  });
+                }
+              });
+            }
+          }
+        }
         user.set({
           introvideo: req.body.introvideo,
           firstname: req.body.firstname,
@@ -295,7 +307,7 @@ class ExpertController {
           havecertifications: req.body.havecertifications,
           timeNotice: req.body.timeNotice,
           timezone: req.body.timezone,
-          calenderSlots: req.body.calenderSlots,
+          // calenderSlots: req.body.calenderSlots,
           pricing: req.body.pricing,
           trialSessions: req.body.trialSessions,
           visibilityLevel: req.body.visibilityLevel,
