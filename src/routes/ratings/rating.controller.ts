@@ -19,16 +19,19 @@ class RatingController {
           // calculate rating
           if (expertRatings && expertRatings.length > 0) {
             let count = 0;
+
             expertRatings.forEach((item: any) => {
               return (count += item.dataValues.rating);
             });
+
             const newRate =
               Math.round((count / expertRatings.length) * 10) / 10;
 
             // expert update
-            const expert = await db.ExpertModel.findOne({
+            const expert = await db.Expert.findOne({
               where: { id: Number(req.body.expertId) },
             });
+
             expert?.set({ rating: newRate });
             expert?.save().then(() => {
               res.status(201).json({
