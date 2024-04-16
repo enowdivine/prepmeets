@@ -5,7 +5,8 @@ import _ from "lodash";
 class SessionController {
   async create(req: Request, res: Response) {
     try {
-      const calenderSlots = req.body.calenderSlots;
+      // const calenderSlots = req.body.calenderSlots;
+      const calenderSlots = req.body;
       if (calenderSlots.length > 0) {
         let allSlotsCreated = true; // Flag to track if all slots are created
         calenderSlots.forEach(
