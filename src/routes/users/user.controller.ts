@@ -595,7 +595,7 @@ class UserController {
   async socialLogin(req: Request, res: Response) {
     try {
       const user = await db.User.findOne({
-        where: { accountId: req.body.accountId },
+        where: { accountId: req.body.accountId, email: req.body.email },
       });
       if (user) {
         const token: string = jwt.sign(
