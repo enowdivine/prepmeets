@@ -263,7 +263,7 @@ class SessionController {
         // Fetch client and expert data for each session
         const sessionUpdated = await Promise.all(
           sessions.rows.map(async (session: any) => {
-            const client = await db.Client.findOne({
+            const client = await db.User.findOne({
               where: { id: parseInt(session.clientId) },
             });
             const expert = await db.Expert.findOne({
@@ -271,8 +271,47 @@ class SessionController {
             });
             return {
               session,
-              client,
-              expert,
+              client: {
+                id: client.id,
+                role: client.role,
+                avatar: client?.avatar,
+                firstname: client.firstname,
+                lastname: client.lastname,
+                email: client.email,
+                phone: client.phone,
+                whatINeed: client.whatINeed,
+                location: client.location,
+                accountId: client.accountId,
+                provider: client.provider,
+              },
+              expert: {
+                id: expert.id,
+                role: expert.role,
+                introvideo: expert.introvideo,
+                avatar: expert?.avatar,
+                firstname: expert.firstname,
+                lastname: expert.lastname,
+                phone: expert.phone,
+                email: expert.email,
+                bio: expert.bio,
+                education: expert.education,
+                experience: expert.experience,
+                certificates: expert.certificates,
+                gender: expert.gender,
+                dateOfBirth: expert.dateOfBirth,
+                location: expert.location,
+                focusarea: expert.focusarea,
+                havecertifications: expert.havecertifications,
+                timeNotice: expert.timeNotice,
+                timezone: expert.timezone,
+                calenderSlots: expert.calenderSlots,
+                pricing: expert.pricing,
+                trialSessions: expert.trialSessions,
+                visibilityLevel: expert.visibilityLevel,
+                payments: expert.payments,
+                accountId: expert.accountId,
+                provider: expert.provider,
+              },
             };
           })
         );
@@ -315,8 +354,64 @@ class SessionController {
       if (sessions.rows.length > 0) {
         const totalPages = Math.ceil(sessions.count / limit);
 
+        // Fetch client and expert data for each session
+        const sessionUpdated = await Promise.all(
+          sessions.rows.map(async (session: any) => {
+            const client = await db.User.findOne({
+              where: { id: parseInt(session.clientId) },
+            });
+            const expert = await db.Expert.findOne({
+              where: { id: parseInt(session.expertId) },
+            });
+            return {
+              session,
+              client: {
+                id: client.id,
+                role: client.role,
+                avatar: client?.avatar,
+                firstname: client.firstname,
+                lastname: client.lastname,
+                email: client.email,
+                phone: client.phone,
+                whatINeed: client.whatINeed,
+                location: client.location,
+                accountId: client.accountId,
+                provider: client.provider,
+              },
+              expert: {
+                id: expert.id,
+                role: expert.role,
+                introvideo: expert.introvideo,
+                avatar: expert?.avatar,
+                firstname: expert.firstname,
+                lastname: expert.lastname,
+                phone: expert.phone,
+                email: expert.email,
+                bio: expert.bio,
+                education: expert.education,
+                experience: expert.experience,
+                certificates: expert.certificates,
+                gender: expert.gender,
+                dateOfBirth: expert.dateOfBirth,
+                location: expert.location,
+                focusarea: expert.focusarea,
+                havecertifications: expert.havecertifications,
+                timeNotice: expert.timeNotice,
+                timezone: expert.timezone,
+                calenderSlots: expert.calenderSlots,
+                pricing: expert.pricing,
+                trialSessions: expert.trialSessions,
+                visibilityLevel: expert.visibilityLevel,
+                payments: expert.payments,
+                accountId: expert.accountId,
+                provider: expert.provider,
+              },
+            };
+          })
+        );
+
         return res.status(200).json({
-          sessions: sessions.rows,
+          sessions: sessionUpdated,
           totalPages: totalPages,
           currentPage: page,
         });
@@ -352,8 +447,64 @@ class SessionController {
       if (sessions.rows.length > 0) {
         const totalPages = Math.ceil(sessions.count / limit);
 
+        // Fetch client and expert data for each session
+        const sessionUpdated = await Promise.all(
+          sessions.rows.map(async (session: any) => {
+            const client = await db.User.findOne({
+              where: { id: parseInt(session.clientId) },
+            });
+            const expert = await db.Expert.findOne({
+              where: { id: parseInt(session.expertId) },
+            });
+            return {
+              session,
+              client: {
+                id: client.id,
+                role: client.role,
+                avatar: client?.avatar,
+                firstname: client.firstname,
+                lastname: client.lastname,
+                email: client.email,
+                phone: client.phone,
+                whatINeed: client.whatINeed,
+                location: client.location,
+                accountId: client.accountId,
+                provider: client.provider,
+              },
+              expert: {
+                id: expert.id,
+                role: expert.role,
+                introvideo: expert.introvideo,
+                avatar: expert?.avatar,
+                firstname: expert.firstname,
+                lastname: expert.lastname,
+                phone: expert.phone,
+                email: expert.email,
+                bio: expert.bio,
+                education: expert.education,
+                experience: expert.experience,
+                certificates: expert.certificates,
+                gender: expert.gender,
+                dateOfBirth: expert.dateOfBirth,
+                location: expert.location,
+                focusarea: expert.focusarea,
+                havecertifications: expert.havecertifications,
+                timeNotice: expert.timeNotice,
+                timezone: expert.timezone,
+                calenderSlots: expert.calenderSlots,
+                pricing: expert.pricing,
+                trialSessions: expert.trialSessions,
+                visibilityLevel: expert.visibilityLevel,
+                payments: expert.payments,
+                accountId: expert.accountId,
+                provider: expert.provider,
+              },
+            };
+          })
+        );
+
         return res.status(200).json({
-          sessions: sessions.rows,
+          sessions: sessionUpdated,
           totalPages: totalPages,
           currentPage: page,
         });

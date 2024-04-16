@@ -130,7 +130,7 @@ router.get("/:id", verifyToken, session.session);
  *          404:
  *              description: session was not found
  */
-router.get("/client/:id", verifyToken, session.clientSessions);
+router.get("/client/:id", session.clientSessions);
 
 /**
  * @swagger
