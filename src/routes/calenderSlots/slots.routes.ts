@@ -6,7 +6,11 @@ const router: Router = express.Router();
 const slot = new SlotsCTL();
 
 router.post("/create", verifyToken, slot.create);
-router.get("/get-slots-by-expert-id", verifyToken, slot.getSlotsByExpertId);
+router.get(
+  "/get-slots-by-expert-id/:expertId",
+  verifyToken,
+  slot.getSlotsByExpertId
+);
 router.put("/update", verifyToken, slot.updateSlotByIdAndExpertId);
 
 export default router;

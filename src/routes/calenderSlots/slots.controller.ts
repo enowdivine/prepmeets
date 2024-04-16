@@ -65,7 +65,7 @@ class SessionController {
       if (available) {
         const slots = await db.Slot.findAll({
           where: {
-            expertId: req.body.expertId,
+            expertId: req.params.expertId,
             available: true,
           },
         });
@@ -73,7 +73,7 @@ class SessionController {
       } else {
         const slots = await db.Slot.findAll({
           where: {
-            expertId: req.body.expertId,
+            expertId: req.params.expertId,
           },
         });
         return res.status(200).json({ message: "success", slots });
